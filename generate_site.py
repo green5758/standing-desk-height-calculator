@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-ErgoDeskCalc - Interactive Standing Desk Height, Chair Seat, Monitor Eye-Level & VESA Arm Load Calculator
+SoilBagCalc - Garden Soil, Mulch, Compost & Raised Bed Volume Calculator
 + Automated Daily Amazon Product Review Publisher
 Affiliate StoreID: everythi00099-20
 """
 
 import os
 import json
+import math
 import hashlib
 import datetime
 import urllib.request
@@ -20,17 +21,16 @@ OUTPUT_DIR = "public"
 REVIEWS_DIR = os.path.join(OUTPUT_DIR, "reviews")
 DAILY_NEW_ARTICLES = 3
 
-# Deteksi otomatis URL GitHub Pages berdasarkan environment GitHub Actions
-REPO_FULL = os.environ.get("GITHUB_REPOSITORY", "username/ergodeskcalc")
+REPO_FULL = os.environ.get("GITHUB_REPOSITORY", "username/soilbagcalc")
 REPO_OWNER = os.environ.get("GITHUB_REPOSITORY_OWNER", REPO_FULL.split("/")[0])
-REPO_NAME = REPO_FULL.split("/")[-1] if "/" in REPO_FULL else "ergodeskcalc"
+REPO_NAME = REPO_FULL.split("/")[-1] if "/" in REPO_FULL else "soilbagcalc"
 
 if REPO_NAME.lower() == f"{REPO_OWNER.lower()}.github.io":
     BASE_URL = f"https://{REPO_OWNER.lower()}.github.io"
 else:
     BASE_URL = f"https://{REPO_OWNER.lower()}.github.io/{REPO_NAME}"
 
-INDEXNOW_KEY = hashlib.md5(f"ergodeskcalc-{AFFILIATE_TAG}".encode("utf-8")).hexdigest()
+INDEXNOW_KEY = hashlib.md5(f"soilbagcalc-{AFFILIATE_TAG}".encode("utf-8")).hexdigest()
 
 
 def amazon_search_url(query: str) -> str:
@@ -39,245 +39,231 @@ def amazon_search_url(query: str) -> str:
 
 
 # ==============================================================================
-# MASTER BEST SELLER & COMPARISON CATALOG (10 FLAGSHIP ERGONOMIC OFFICE PRODUCTS)
+# MASTER BEST SELLER & COMPARISON CATALOG (10 FLAGSHIP GARDEN SOIL & BED PRODUCTS)
 # ==============================================================================
 CORE_PRODUCTS = [
     {
-        "id": "flexispot-e7-pro-standing-desk",
-        "name": "FlexiSpot E7 Dual-Motor Heavy-Duty Electric Standing Desk Frame",
-        "brand": "FlexiSpot",
-        "category": "Standing Desk",
-        "min_h_in": 22.8,
-        "max_h_in": 48.4,
-        "load_lbs": 355,
-        "key_spec": "3-Stage Dual Motor (22.8\"–48.4\" Range)",
-        "ergo_benefit": "BIFMA Certified Ultra-Low 22.8\" Minimum Height",
-        "rating": "4.8",
-        "reviews_count": 7840,
-        "badge": "#1 Best Overall Standing Desk",
-        "search_query": "FlexiSpot E7 Dual Motor Standing Desk Frame",
-        "highlight": "3-stage inverted carbon steel columns fit users from 4'11\" to 6'6\" with zero wobble at standing height and 355 lb lift capacity."
-    },
-    {
-        "id": "ergotron-lx-desk-monitor-arm",
-        "name": "Ergotron LX Single Monitor Arm (Up to 34-Inch / 25 lbs VESA)",
-        "brand": "Ergotron",
-        "category": "Monitor Arm",
-        "min_h_in": 13.0,
-        "max_h_in": 24.0,
-        "load_lbs": 25,
-        "key_spec": "Constant Force Lift (7–25 lbs, 13\" Lift)",
-        "ergo_benefit": "10,000-Cycle Tested Zero-Sag Precision Pivot",
+        "id": "fox-farm-ocean-forest-potting-soil",
+        "name": "FoxFarm FX14053 Ocean Forest Organic Potting Soil (12-Quart / 2 Cu.Ft.)",
+        "brand": "FoxFarm",
+        "category": "Potting & Raised Bed Soil",
+        "bag_cuft": 2.0,
+        "coverage_at_3in_sqft": 8.0,
+        "soil_type": "Aged Forest Humus, Earthworm Castings & Bat Guano",
+        "ph_range": "6.3 – 6.8 pH (Ready to Plant)",
         "rating": "4.7",
-        "reviews_count": 6490,
-        "badge": "#1 Pro Monitor Arm",
-        "search_query": "Ergotron LX Desk Monitor Arm VESA Mount",
-        "highlight": "Patented Constant Force mechanical spring technology glides effortlessly to eye level without gas-cylinder leaks over 10+ years."
+        "reviews_count": 26400,
+        "badge": "#1 Best Selling Potting Soil",
+        "search_query": "FoxFarm Ocean Forest Organic Potting Soil",
+        "highlight": "Pre-charged with composted forest humus, peat moss, earthworm castings, fish emulsion, and sandy loam for vigorous root aeration."
     },
     {
-        "id": "ergotron-hx-ultrawide-arm",
-        "name": "Ergotron HX Heavy-Duty Monitor Arm for 49-Inch Ultrawide Displays",
-        "brand": "Ergotron",
-        "category": "Monitor Arm",
-        "min_h_in": 11.5,
-        "max_h_in": 23.5,
-        "load_lbs": 42,
-        "key_spec": "Heavy-Duty Tilt Pivot (20–42 lbs Capacity)",
-        "ergo_benefit": "Supports 49\" Samsung Odyssey G9 Curved Monitors",
-        "rating": "4.8",
-        "reviews_count": 3120,
-        "badge": "Best Ultrawide Monitor Arm",
-        "search_query": "Ergotron HX Heavy Duty Ultrawide Monitor Arm",
-        "highlight": "Engineered specifically for deep-curved 49-inch and 57-inch ultrawide monitors with reinforced tilt pivot and desk clamp."
-    },
-    {
-        "id": "steelcase-leap-v2-ergonomic-chair",
-        "name": "Steelcase Leap V2 Ergonomic High-Back Office Task Chair",
-        "brand": "Steelcase",
-        "category": "Ergonomic Chair",
-        "min_h_in": 15.5,
-        "max_h_in": 20.5,
-        "load_lbs": 400,
-        "key_spec": "LiveBack Flexing Spine + 4D Adjustable Arms",
-        "ergo_benefit": "15.5\"–20.5\" Seat Pan Height + Seat Depth Slider",
+        "id": "miracle-gro-raised-bed-soil",
+        "name": "Miracle-Gro Raised Bed Soil Blended for Vegetables, Herbs & Flowers",
+        "brand": "Miracle-Gro",
+        "category": "Potting & Raised Bed Soil",
+        "bag_cuft": 2.0,
+        "coverage_at_3in_sqft": 8.0,
+        "soil_type": "Compost, Peat Moss & Slow-Release Plant Food",
+        "ph_range": "6.0 – 7.0 pH (Feeds up to 3 Months)",
         "rating": "4.6",
-        "reviews_count": 4210,
-        "badge": "Best All-Day Task Chair",
-        "search_query": "Steelcase Leap Ergonomic Office Chair",
-        "highlight": "Dynamic LiveBack backrest flexes with your lumbar curve while 4D armrests and sliding seat pan dial in exact thigh support."
+        "reviews_count": 18900,
+        "badge": "Best Raised Bed Mix",
+        "search_query": "Miracle-Gro Raised Bed Soil Vegetables Flowers",
+        "highlight": "Formulated specifically not to compact in raised wooden or metal beds while feeding tomatoes, peppers, and greens for up to 3 months."
     },
     {
-        "id": "sihoo-doro-c300-mesh-chair",
-        "name": "SIHOO Doro C300 Self-Adaptive Lumbar Mesh Ergonomic Chair",
-        "brand": "SIHOO",
-        "category": "Ergonomic Chair",
-        "min_h_in": 17.5,
-        "max_h_in": 21.5,
-        "load_lbs": 300,
-        "key_spec": "Dynamic Domino Lumbar + 3D Coordinated Armrests",
-        "ergo_benefit": "Breathable Full-Mesh Frame & Waterfall Seat Edge",
-        "rating": "4.6",
-        "reviews_count": 5380,
-        "badge": "Best Value Ergonomic Chair",
-        "search_query": "SIHOO Doro C300 Ergonomic Office Chair Mesh",
-        "highlight": "Self-tracking dynamic lumbar cushion moves automatically as you lean forward or recline to 130 degrees during long work sessions."
-    },
-    {
-        "id": "fezibo-dual-motor-standing-desk-60",
-        "name": "FEZIBO 60x24 Inch Dual-Motor Standing Desk with Keyboard Tray",
-        "brand": "FEZIBO",
-        "category": "Standing Desk",
-        "min_h_in": 27.6,
-        "max_h_in": 47.3,
-        "load_lbs": 220,
-        "key_spec": "Dual Motor + Slide-Out Ergonomic Keyboard Tray",
-        "ergo_benefit": "4 Memory Presets + Anti-Collision Safety Sensor",
-        "rating": "4.6",
-        "reviews_count": 14600,
-        "badge": "Best Budget Standing Desk",
-        "search_query": "FEZIBO Dual Motor Standing Desk 60 Inch",
-        "highlight": "Complete desktop + dual-motor frame with integrated under-desk cable management tray and lockable rolling casters."
-    },
-    {
-        "id": "huanuo-dual-monitor-gas-spring-arm",
-        "name": "HUANUO HNDS8 Dual Monitor Gas-Spring Desk Mount (Up to 32-Inch)",
-        "brand": "HUANUO",
-        "category": "Monitor Arm",
-        "min_h_in": 10.0,
-        "max_h_in": 21.0,
-        "load_lbs": 19.8,
-        "key_spec": "Dual Gas-Spring Arms (4.4–19.8 lbs per Arm)",
-        "ergo_benefit": "360° Portrait/Landscape Rotation + USB Hub Base",
+        "id": "vivosun-heavy-duty-fabric-grow-bags",
+        "name": "VIVOSUN 5-Pack 10-Gallon Heavy-Duty 300G Nonwoven Fabric Grow Pots",
+        "brand": "VIVOSUN",
+        "category": "Fabric Grow Bags",
+        "bag_cuft": 1.34,
+        "coverage_at_3in_sqft": 12.5,
+        "soil_type": "300g Thickened Breathable Nonwoven Geotextile",
+        "ph_range": "Air-Prunes Roots & Prevents Overwatering",
         "rating": "4.7",
-        "reviews_count": 19850,
-        "badge": "#1 Best Selling Dual Arm",
-        "search_query": "HUANUO Dual Monitor Stand Gas Spring Arm",
-        "highlight": "Dual independent gas springs clear desk clutter and align side-by-side 27-inch or 32-inch screens at identical eye level."
+        "reviews_count": 39200,
+        "badge": "#1 Best Selling Grow Bags",
+        "search_query": "VIVOSUN Heavy Duty Fabric Grow Bags 10 Gallon",
+        "highlight": "Reinforced stitched handles and breathable fabric walls promote fibrous root air-pruning and superior drainage on patios or decks."
     },
     {
-        "id": "urevo-under-desk-walking-pad",
-        "name": "UREVO 2.5 HP Slim Under-Desk Walking Pad Treadmill for Standing Desks",
-        "brand": "UREVO",
-        "category": "Standing Accessories",
-        "min_h_in": 4.8,
-        "max_h_in": 4.8,
-        "load_lbs": 265,
-        "key_spec": "2.5 HP Quiet Motor (0.6–4.0 MPH, 4.8\" Deck)",
-        "ergo_benefit": "8-Point Silicone Shock Absorption for Joint Comfort",
+        "id": "vegega-galvanized-raised-garden-bed",
+        "name": "VEGEGA 8x2x1.5 ft 9-in-1 Modular Galvanized Metal Raised Garden Bed",
+        "brand": "VEGEGA",
+        "category": "Metal Raised Garden Beds",
+        "bag_cuft": 24.0,
+        "coverage_at_3in_sqft": 16.0,
+        "soil_type": "Aluzinc Corrosion-Resistant Steel (0.8mm–1.8mm)",
+        "ph_range": "Eco-Friendly Non-Leaching Coating",
         "rating": "4.6",
-        "reviews_count": 11200,
-        "badge": "#1 Under-Desk Walking Pad",
-        "search_query": "UREVO Under Desk Walking Pad Treadmill 2.5 HP",
-        "highlight": "Ultra-slim 4.8-inch deck slides under any standing desk or sofa and adds effortless 10,000-step low-impact cardio while working."
+        "reviews_count": 5840,
+        "badge": "Best Deep Raised Bed",
+        "search_query": "VEGEGA Galvanized Metal Raised Garden Bed",
+        "highlight": "17-inch tall wall height supports deep root crops and hugelkultur bottom-fill layering while resisting rust for 20+ years."
     },
     {
-        "id": "ergodriven-topo-anti-fatigue-mat",
-        "name": "Ergodriven Topo Calculated-Terrain Anti-Fatigue Standing Desk Mat",
-        "brand": "Ergodriven",
-        "category": "Standing Accessories",
-        "min_h_in": 1.0,
-        "max_h_in": 2.8,
-        "load_lbs": 350,
-        "key_spec": "3D Contoured Polyurethane Terrain Surface",
-        "ergo_benefit": "Prompts Micro-Movements & Calf Stretching",
-        "rating": "4.8",
-        "reviews_count": 9640,
-        "badge": "Best Standing Desk Mat",
-        "search_query": "Ergodriven Topo Anti Fatigue Standing Desk Mat",
-        "highlight": "Sculpted raised perimeter ridges and central teardrop mound eliminate foot soreness and encourage unconscious posture shifts."
+        "id": "scott-naturals-cedar-mulch",
+        "name": "Scotts Nature Scapes 2 Cu. Ft. Deep Forest Brown Color-Enhanced Mulch",
+        "brand": "Scotts",
+        "category": "Garden Mulch & Compost",
+        "bag_cuft": 2.0,
+        "coverage_at_3in_sqft": 8.0,
+        "soil_type": "100% Recycled Forest Wood Fiber (1-Year Color Lock)",
+        "ph_range": "Suppresses Weeds & Retains Soil Moisture",
+        "rating": "4.6",
+        "reviews_count": 11300,
+        "badge": "#1 Best Selling Mulch",
+        "search_query": "Scotts Nature Scapes Mulch 2 cu ft",
+        "highlight": "Locks in soil moisture during hot summer weeks and blocks annual weed germination around shrubs, trees, and perennial borders."
     },
     {
-        "id": "logitech-mx-ergo-vertical-combo",
-        "name": "Logitech Ergo K860 Split Keyboard & Lift Vertical Ergonomic Mouse",
-        "brand": "Logitech",
-        "category": "Ergonomic Peripherals",
-        "min_h_in": 0.5,
-        "max_h_in": 2.0,
-        "load_lbs": 5,
-        "key_spec": "Curved Split Keyframe + 57° Handshake Mouse Angle",
-        "ergo_benefit": "Reduces Forearm Pronation & Wrist Strain by 25%",
+        "id": "coast-of-maine-stonington-blend",
+        "name": "Coast of Maine Stonington Blend Organic Grower's Mix (1 Cu. Ft.)",
+        "brand": "Coast of Maine",
+        "category": "Potting & Raised Bed Soil",
+        "bag_cuft": 1.0,
+        "coverage_at_3in_sqft": 4.0,
+        "soil_type": "Lobster & Crab Compost, Sphagnum Peat & Kelp Meal",
+        "ph_range": "6.2 – 6.8 pH (OMRI Listed Organic)",
         "rating": "4.7",
-        "reviews_count": 16700,
-        "badge": "Best Wrist-Relief Combo",
-        "search_query": "Logitech Ergo K860 Split Keyboard Lift Vertical Mouse",
-        "highlight": "Pillowed 3-layer memory foam palm rest with negative tilt legs pairs with a 57-degree vertical mouse to eliminate ulnar deviation."
+        "reviews_count": 4720,
+        "badge": "Top Organic Grower Mix",
+        "search_query": "Coast of Maine Stonington Blend Organic Grower Mix",
+        "highlight": "Rich marine compost and kelp meal blend with balanced water retention and drainage for heirloom vegetables and containers."
+    },
+    {
+        "id": "black-kow-composted-cow-manure",
+        "name": "Black Kow 50-lb (1 Cu. Ft.) Composted Cow Manure Soil Amendment",
+        "brand": "Black Kow",
+        "category": "Garden Mulch & Compost",
+        "bag_cuft": 1.0,
+        "coverage_at_3in_sqft": 4.0,
+        "soil_type": "100% Composted Cow Manure + Lime & Humus",
+        "ph_range": "Odor-Free Aged Organic Microbe Booster",
+        "rating": "4.7",
+        "reviews_count": 15600,
+        "badge": "Best Soil Conditioner",
+        "search_query": "Black Kow Composted Cow Manure 50 lb",
+        "highlight": "Improves clay and sandy native soil structure by blending 25%–50% composted organic matter into existing garden beds."
+    },
+    {
+        "id": "ac-infinity-heavy-duty-grow-bags",
+        "name": "AC Infinity 4-Pack 5-Gallon Heavy-Duty 500G Fabric Grow Bags",
+        "brand": "AC Infinity",
+        "category": "Fabric Grow Bags",
+        "bag_cuft": 0.67,
+        "coverage_at_3in_sqft": 8.0,
+        "soil_type": "Ultra-Thick 500G Woven Fabric + Nylon Straps",
+        "ph_range": "High-Drainage Root Zone Aeration",
+        "rating": "4.8",
+        "reviews_count": 8910,
+        "badge": "Heavy-Duty 500G Fabric",
+        "search_query": "AC Infinity Heavy Duty 5 Gallon Fabric Grow Bags",
+        "highlight": "Heavy 500gsm fabric resists tearing when moving loaded pots and keeps root temperatures cooler in direct afternoon sun."
+    },
+    {
+        "id": "vivosun-galvanized-raised-bed-oval",
+        "name": "VIVOSUN 6x3x1 ft Oval Galvanized Steel Raised Garden Bed Kit",
+        "brand": "VIVOSUN",
+        "category": "Metal Raised Garden Beds",
+        "bag_cuft": 18.0,
+        "coverage_at_3in_sqft": 18.0,
+        "soil_type": "Double-Layer Anti-Rust Galvanized Sheet Steel",
+        "ph_range": "Open-Bottom Drainage + Rubber Edge Trim",
+        "rating": "4.6",
+        "reviews_count": 12800,
+        "badge": "Best Value Metal Bed",
+        "search_query": "VIVOSUN Galvanized Raised Garden Bed 6x3x1 ft",
+        "highlight": "Tool-friendly bolt assembly with protective top edge strip and open bottom for natural earthworm migration and drainage."
+    },
+    {
+        "id": "back-to-the-roots-organic-seed-starter",
+        "name": "Back to the Roots 100% Organic Potting Mix & Seed Starting Blend",
+        "brand": "Back to the Roots",
+        "category": "Potting & Raised Bed Soil",
+        "bag_cuft": 1.5,
+        "coverage_at_3in_sqft": 6.0,
+        "soil_type": "Peat-Free / Sustainable Coir, Compost & Perlite",
+        "ph_range": "6.2 – 6.8 pH (Peat-Free Option)",
+        "rating": "4.5",
+        "reviews_count": 6430,
+        "badge": "Best Peat-Free Blend",
+        "search_query": "Back to the Roots Organic Potting Mix",
+        "highlight": "Lightweight organic blend with yucca extract wetting agent for even moisture distribution across indoor planters and outdoor beds."
     }
 ]
 
 
 # ==============================================================================
-# COMBINATORIAL ENGINE FOR 1,800 UNIQUE DAILY ERGONOMIC PRODUCT REVIEW ARTICLES
+# COMBINATORIAL ENGINE FOR 1,800 UNIQUE DAILY GARDEN SOIL & BED REVIEWS
 # ==============================================================================
 BRANDS_MATRIX = [
-    ("FlexiSpot", "3-Stage Dual-Motor Telescoping Steel Frame & 355 lb Lift Rating"),
-    ("UPLIFT Desk", "Commercial-Grade C-Frame Crossbar Stability & 15-Year Warranty"),
-    ("Ergotron", "Patented Constant Force Mechanical Spring & 10,000-Cycle Precision Pivot"),
-    ("Steelcase", "LiveBack Dynamic Spinal Flexure & 4-Way Micro-Adjustable Armrests"),
-    ("SIHOO", "Self-Adaptive Domino Lumbar Architecture & Breathable Dragon Mesh"),
-    ("HUANUO", "Heavy-Duty Reinforced Gas-Spring Cylinder & Dual C-Clamp Base"),
-    ("VIVO", "Solid Steel Articulating VESA Counterbalance & Integrated Cable Clips"),
-    ("FEZIBO", "Dual-Motor Quiet 45dB Drive & Anti-Collision Gyro Sensor"),
-    ("Marsail", "One-Piece Solid Laminate Desktop & 4-Memory Digital Handset"),
-    ("UREVO", "2.5 HP Whisper-Quiet Brushless Motor & 5-Layer Shock-Absorbing Belt"),
-    ("Ergodriven", "Calculated 3D Terrain Polyurethane Foam & Single-Foot Slide Heel"),
-    ("Branch", "Commercial BIFMA Ergonomic Calibration & Anodized Aluminum Base"),
-    ("Logitech Ergo", "57-Degree Neutral Handshake Geometry & Split Curved Keyframe"),
-    ("Autonomous", "High-Torque Dual-Motor Lift Columns & 7-Year Steel Frame Rating"),
-    ("Humanscale", "Weight-Sensitive Counterbalance Recline & Knob-Free Automatic Fit"),
+    ("FoxFarm", "Aged Forest Humus, Earthworm Castings & Balanced Drainage"),
+    ("Miracle-Gro", "Controlled-Release Plant Nutrition & Loose Root Aeration"),
+    ("Coast of Maine", "Marine Kelp Meal, Lobster Compost & OMRI Organic Matter"),
+    ("Black Kow", "Aged Composted Cow Manure & Beneficial Soil Microbes"),
+    ("VIVOSUN", "Breathable Nonwoven Root Fabric & Anti-Rust Galvanized Panels"),
+    ("VEGEGA", "Heavy-Gauge Aluzinc Steel & Modular Multi-Shape Bed Framing"),
+    ("Scotts", "Color-Lock Forest Mulch Fiber & Moisture-Retaining Texture"),
+    ("AC Infinity", "500G Heavy-Duty Woven Geotextile & Reinforced Load Handles"),
+    ("Back to the Roots", "Sustainable Organic Compost Blend & Even Wetting Matrix"),
+    ("Espoma Organic", "Mycorrhizae Root Enhancer & Natural Compost Humate"),
+    ("Happy Frog", "Soil Conditioner with Beneficial Fungi & Humic Acids"),
+    ("Gardzen", "Heavy-Duty Breathable Aeration Pots & Drainage Reinforcement"),
+    ("Keter", "Weather-Resistant Resin Planter Wall & Wood-Grain Finish"),
+    ("LifeSmart", "UV-Stabilized Composite Garden Edging & Modular Bed Kit"),
+    ("Burpee", "Eco-Friendly Seed & Root Blend with High Perlite Porosity"),
 ]
 
 MODELS_MATRIX = [
-    ("Dual-Motor 3-Stage Electric Standing Desk (22.8\"–48.4\")", 22.8, 48.4, 355, "Standing Desk", "Dual-Motor 3-Stage Columns"),
-    ("L-Shaped Corner Triple-Motor Standing Desk (24\"–49\")", 24.0, 49.0, 440, "Standing Desk", "Triple-Motor 3-Leg Stability"),
-    ("Compact 48x24 Home Office Electric Standing Desk", 27.5, 47.2, 220, "Standing Desk", "Small-Space Dual Motor"),
-    ("Heavy-Duty 49-Inch Ultrawide VESA Monitor Arm (42 lbs)", 11.5, 23.5, 42, "Monitor Arm", "Ultrawide Counterbalance Tilt"),
-    ("Single Gas-Spring Monitor Mount (Up to 34\" / 26 lbs)", 10.0, 22.0, 26, "Monitor Arm", "Full-Motion 360° Gas Spring"),
-    ("Dual Side-by-Side Articulating Monitor Arm (2x 32\")", 10.0, 21.5, 40, "Monitor Arm", "Independent Dual VESA Arms"),
-    ("High-Back Mesh Ergonomic Chair with Dynamic Lumbar", 17.0, 21.5, 330, "Ergonomic Chair", "Seat-Depth Slider + 4D Arms"),
-    ("Big & Tall 400 lb Heavy-Duty Ergonomic Task Chair", 17.5, 22.0, 400, "Ergonomic Chair", "Wide 22\" Cushion + Steel Base"),
-    ("Petite-Friendly Low-Seat Ergonomic Office Chair", 15.5, 19.5, 300, "Ergonomic Chair", "15.5\" Low-Drop Gas Cylinder"),
-    ("2.5 HP Slim Under-Desk Walking Pad Treadmill", 4.8, 4.8, 265, "Standing Accessories", "4.8\" Ultra-Low Deck Profile"),
-    ("3D Contoured Anti-Fatigue Standing Desk Floor Mat", 1.0, 2.8, 350, "Standing Accessories", "High-Density Beveled Terrain"),
-    ("Split Ergonomic Keyboard & 57° Vertical Mouse Kit", 0.5, 2.0, 5, "Ergonomic Peripherals", "Negative-Tilt Palm Rest"),
+    ("2 Cu. Ft. Organic Raised Bed & Potting Soil Bag", 2.0, 8.0, "Potting & Raised Bed Soil", "6.3–6.8 pH", "Loose Loam & Compost"),
+    ("1.5 Cu. Ft. Premium Container & Planter Mix", 1.5, 6.0, "Potting & Raised Bed Soil", "6.2–6.7 pH", "High-Perlite Aeration Mix"),
+    ("1 Cu. Ft. (50 lb) Composted Manure Soil Amendment", 1.0, 4.0, "Garden Mulch & Compost", "Neutral pH", "Rich Organic Humus"),
+    ("2 Cu. Ft. Deep Forest Hardwood & Bark Mulch", 2.0, 8.0, "Garden Mulch & Compost", "Weed & Moisture Barrier", "Shredded Bark & Wood Fiber"),
+    ("8x2x1.5 ft (24 Cu. Ft.) Deep Metal Raised Garden Bed", 24.0, 16.0, "Metal Raised Garden Beds", "18-Inch Root Depth", "Galvanized Corrugated Steel"),
+    ("6x3x1 ft (18 Cu. Ft.) Oval Galvanized Raised Bed", 18.0, 18.0, "Metal Raised Garden Beds", "12-Inch Wall Height", "Anti-Rust Coated Steel"),
+    ("4x4x1 ft (16 Cu. Ft.) Square Kitchen Garden Bed", 16.0, 16.0, "Metal Raised Garden Beds", "12-Inch Wall Height", "Modular Corner Panels"),
+    ("5-Pack 10-Gallon Heavy-Duty Breathable Grow Bags", 6.7, 15.0, "Fabric Grow Bags", "Air-Pruning Walls", "Thick Nonwoven Geotextile"),
+    ("5-Pack 7-Gallon Tomato, Pepper & Potato Grow Pots", 4.7, 12.0, "Fabric Grow Bags", "High Drainage Rate", "Reinforced Strap Fabric"),
+    ("4-Pack 15-Gallon Large Shrub & Patio Grow Bags", 8.0, 20.0, "Fabric Grow Bags", "Deep Root Volume", "Heavy-Duty Aeration Cloth"),
+    ("3 Cu. Ft. Bulk-Equivalent Garden Soil Value Pack", 3.0, 12.0, "Potting & Raised Bed Soil", "6.2–6.8 pH", "Compost & Screened Topsoil"),
+    ("2 Cu. Ft. Cedar & Cypress Landscape Mulch Bag", 2.0, 8.0, "Garden Mulch & Compost", "Natural Aromatic Fiber", "Moisture-Locking Mulch"),
 ]
 
-USER_PROFILES_MATRIX = [
-    ("Tall Users (6'1\" to 6'6\") Needing Extra Standing Elevation", 75, "prevents hunched shoulders by reaching full 46+ inch standing elbow height cleanly"),
-    ("Petite & Shorter Users (4'11\" to 5'4\") Needing Low Seated Desk Drop", 62, "eliminates shoulder shrugging by dropping low enough for 90-degree relaxed forearms"),
-    ("Average-Height Remote Workers (5'7\" to 5'11\") Working 8+ Hours Daily", 69, "maintains neutral spine alignment across seamless sit-to-stand transitions all day"),
-    ("Software Engineers & Programmers Running Dual 32-Inch 4K Monitors", 70, "holds heavy multi-monitor arrays rock-steady at exact eye level without screen bounce"),
-    ("Ultrawide 49-Inch Curved Gaming & Day-Trading Battlestations", 71, "absorbs forward center-of-gravity torque so curved screens never droop"),
-    ("Small Apartment & Bedroom Corner Home Office Setups", 66, "reclaims valuable desk surface area while maintaining proper 24-inch viewing distance"),
-    ("Lower Back Pain & Sciatica Relief Active Sit-Stand Workflows", 68, "offloads lumbar disc compression by alternating seated support with active standing"),
-    ("Walking-Pad Active Desk Workers Logging 10,000 Steps Per Shift", 70, "adds 5 inches of extra standing height clearance to match treadmill deck thickness"),
-    ("Video Editors, Architects & Creative Studio Colorists", 69, "stabilizes heavy audio interfaces, studio monitors, and dual color-calibrated displays"),
-    ("Shared Family & Dual-User Hot-Desking Workstations", 67, "stores 4 instant height presets so two different users switch posture in 8 seconds"),
+APPLICATIONS_MATRIX = [
+    ("8x4 ft Raised Vegetable Bed at 9-Inch Soil Depth (24 Cu. Ft.)", 24.0, "fills a classic 8x4 ft raised bed cleanly without running short mid-project"),
+    ("4x8 ft Herb, Salad Green & Root Crop Planter (16 Cu. Ft.)", 16.0, "provides loose, clod-free root media for carrots, radishes, lettuce, and basil"),
+    ("Backyard Shrub Border & Tree Ring Mulching at 3-Inch Depth", 18.0, "locks in moisture, moderates soil temperature swings, and suppresses weeds"),
+    ("Sunny Patio, Deck & Balcony Container Garden Setup", 10.0, "delivers balanced drainage and aeration for tomatoes, peppers, and patio herbs"),
+    ("Heavy Clay Yard Soil Remediation & Organic Matter Tilling", 20.0, "loosens dense clay structure when blended 1:3 with native backyard soil"),
+    ("Deep-Rooted Raised Bed for Tomatoes, Zucchini & Peppers", 27.0, "supports deep taproots and moisture consistency during peak summer heat"),
+    ("Pollinator Flower Bed & Perennial Border Refresh", 14.0, "creates a nutrient-rich bed for coneflowers, lavender, zinnias, and perennials"),
+    ("Small Urban Backyard & Rental Yard Modular Bed Project", 12.0, "makes it easy to grow fresh produce in tight spaces without tearing up turf"),
+    ("Walkway & Fence-Line Weed Suppression Mulch Strip", 15.0, "keeps narrow side-yard strips tidy with minimal seasonal maintenance"),
+    ("Multi-Bed Kitchen Garden Expansion (Two 6x3 ft Beds)", 36.0, "scales efficiently across multiple raised beds while keeping bag math simple"),
 ]
 
 
 def get_article_blueprint(index: int) -> dict:
-    """Secara deterministik menghasilkan artikel review produk ergonomi kantor unik berdasarkan indeks."""
+    """Secara deterministik menghasilkan artikel review tanah/mulsa/bed kebun unik berdasarkan indeks."""
     b_idx = index % len(BRANDS_MATRIX)
     m_idx = (index // len(BRANDS_MATRIX)) % len(MODELS_MATRIX)
-    u_idx = (index // (len(BRANDS_MATRIX) * len(MODELS_MATRIX))) % len(USER_PROFILES_MATRIX)
+    a_idx = (index // (len(BRANDS_MATRIX) * len(MODELS_MATRIX))) % len(APPLICATIONS_MATRIX)
 
     brand_name, brand_tech = BRANDS_MATRIX[b_idx]
-    model_name, min_h, max_h, load_lbs, category, core_mech = MODELS_MATRIX[m_idx]
-    profile_title, height_in, profile_benefit = USER_PROFILES_MATRIX[u_idx]
+    model_name, vol_cuft, cov_3in, category, spec_note, media_type = MODELS_MATRIX[m_idx]
+    app_title, target_cuft, app_benefit = APPLICATIONS_MATRIX[a_idx]
 
-    ft = height_in // 12
-    inch = height_in % 12
-    cm = round(height_in * 2.54)
-    sit_desk = round(height_in * 0.405 + 0.8, 1)
-    stand_desk = round(height_in * 0.625 + 0.8, 1)
-    chair_h = round(height_in * 0.25 + 0.8, 1)
+    bags_needed = max(1, math.ceil(target_cuft / max(vol_cuft, 0.5)))
+    cu_yards = round(target_cuft / 27.0, 2)
 
-    slug = f"review-{brand_name.lower().replace(' ', '-')}-{model_name.lower().replace('\"', 'in').replace('(', '').replace(')', '').replace('/', '').replace(' ', '-')}-{index + 1}"
+    slug = f"review-{brand_name.lower().replace(' ', '-')}-{model_name.lower().replace('.', '').replace('/', '').replace(' ', '-')}-{index + 1}"
     slug = "".join(c if c.isalnum() or c == "-" else "" for c in slug)
     while "--" in slug:
         slug = slug.replace("--", "-")
 
-    title = f"{brand_name} {model_name} Review: Ergonomic Fit for {profile_title}"
+    title = f"{brand_name} {model_name} Review: Sized for {app_title}"
     search_q = f"{brand_name} {model_name}"
 
     return {
@@ -288,17 +274,15 @@ def get_article_blueprint(index: int) -> dict:
         "brand_tech": brand_tech,
         "model_name": model_name,
         "category": category,
-        "min_h": min_h,
-        "max_h": max_h,
-        "load_lbs": load_lbs,
-        "core_mech": core_mech,
-        "profile_title": profile_title,
-        "height_label": f"{ft}'{inch}\" ({cm} cm)",
-        "height_in": height_in,
-        "sit_desk": sit_desk,
-        "stand_desk": stand_desk,
-        "chair_h": chair_h,
-        "profile_benefit": profile_benefit,
+        "vol_cuft": vol_cuft,
+        "cov_3in": cov_3in,
+        "spec_note": spec_note,
+        "media_type": media_type,
+        "app_title": app_title,
+        "target_cuft": target_cuft,
+        "cu_yards": cu_yards,
+        "bags_needed": bags_needed,
+        "app_benefit": app_benefit,
         "rating": "4.8" if (index % 2 == 0) else "4.7",
         "search_query": search_q,
         "affiliate_url": amazon_search_url(search_q),
@@ -306,7 +290,7 @@ def get_article_blueprint(index: int) -> dict:
 
 
 def load_and_advance_state() -> tuple[list[dict], list[dict]]:
-    """Memuat daftar artikel dari posts_state.json dan menambahkan 3 artikel review unik setiap hari."""
+    """Memuat posts_state.json dan menambahkan 3 artikel review baru setiap hari."""
     today_str = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
 
     if os.path.exists(STATE_FILE):
@@ -321,9 +305,9 @@ def load_and_advance_state() -> tuple[list[dict], list[dict]]:
 
     newly_added = []
     if len(state["published_articles"]) == 0:
-        count_to_add = 6  # Inisialisasi perdana 6 artikel
+        count_to_add = 6
     else:
-        count_to_add = DAILY_NEW_ARTICLES  # Tambah 3 artikel berbeda setiap hari
+        count_to_add = DAILY_NEW_ARTICLES
 
     for _ in range(count_to_add):
         idx = state["next_index"]
@@ -353,21 +337,21 @@ def load_and_advance_state() -> tuple[list[dict], list[dict]]:
 
 
 # ==============================================================================
-# SHARED CSS — INDUSTRIAL GREY BACKGROUND THEME
+# SHARED CSS — GREY BACKGROUND THEME
 # ==============================================================================
 GLOBAL_CSS = """
 :root {
-  --bg-page: #cbd5e1;        /* Abu-abu utama (Grey background sesuai instruksi) */
-  --bg-section: #e2e8f0;     /* Abu-abu medium untuk kontainer seksi */
-  --bg-card: #f1f5f9;        /* Abu-abu terang untuk kartu konten & kalkulator */
-  --bg-dark: #1e293b;        /* Abu-abu slate gelap untuk header & tabel */
-  --bg-darker: #0f172a;      /* Slate pekat untuk banner atas & footer */
-  --border-grey: #94a3b8;    /* Garis tepi abu-abu tegas */
+  --bg-page: #cbd5e1;
+  --bg-section: #e2e8f0;
+  --bg-card: #f1f5f9;
+  --bg-dark: #1e293b;
+  --bg-darker: #0f172a;
+  --border-grey: #94a3b8;
   --text-main: #0f172a;
   --text-muted: #334155;
   --accent-amazon: #ff9900;
-  --accent-blue: #0369a1;
   --accent-green: #15803d;
+  --accent-link: #0369a1;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -376,10 +360,9 @@ body {
   color: var(--text-main);
   line-height: 1.6;
 }
-a { color: var(--accent-blue); text-decoration: none; }
+a { color: var(--accent-link); text-decoration: none; }
 .container { max-width: 1240px; margin: 0 auto; padding: 0 18px; }
 
-/* TOP PROMO BANNER */
 .top-promo-banner {
   background: linear-gradient(90deg, #0f172a 0%, #334155 50%, #1e293b 100%);
   color: #ffffff;
@@ -401,16 +384,13 @@ a { color: var(--accent-blue); text-decoration: none; }
 .top-promo-banner a.banner-cta {
   display: inline-block;
   margin-left: 12px;
-  background: #38bdf8;
-  color: #0f172a;
+  background: #4ade80;
+  color: #052e16;
   font-weight: 800;
   padding: 4px 14px;
   border-radius: 5px;
-  text-decoration: none;
 }
-.top-promo-banner a.banner-cta:hover { background: #7dd3fc; }
 
-/* STICKY HEADER */
 header.site-header {
   background-color: var(--bg-dark);
   color: #f8fafc;
@@ -431,7 +411,6 @@ header.site-header {
   font-size: 1.55rem;
   font-weight: 900;
   color: #ffffff;
-  letter-spacing: -0.5px;
 }
 .brand-logo span { color: var(--accent-amazon); }
 .nav-links {
@@ -449,7 +428,6 @@ header.site-header {
 }
 .nav-links a:hover { background: #334155; color: var(--accent-amazon); }
 
-/* HERO BANNER */
 .hero-banner {
   background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
   color: #f8fafc;
@@ -457,7 +435,6 @@ header.site-header {
   margin: 24px 0;
   border-radius: 12px;
   border: 2px solid #64748b;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.14);
 }
 .hero-grid {
   display: grid;
@@ -475,9 +452,8 @@ header.site-header {
   border-radius: 10px;
   text-align: center;
 }
-.hero-deal-box h3 { color: var(--accent-amazon); margin-bottom: 8px; font-size: 1.18rem; }
+.hero-deal-box h3 { color: var(--accent-amazon); margin-bottom: 8px; font-size: 1.16rem; }
 
-/* BUTTONS */
 .btn-amazon {
   display: inline-block;
   background: linear-gradient(180deg, #ffd814 0%, #ff9900 100%);
@@ -488,8 +464,6 @@ header.site-header {
   border: 1px solid #d97706;
   text-align: center;
   cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
 .btn-amazon:hover { background: linear-gradient(180deg, #f7ca00 0%, #e68a00 100%); }
 .btn-outline {
@@ -503,14 +477,12 @@ header.site-header {
 }
 .btn-outline:hover { background: #1e293b; color: #ffffff; }
 
-/* GREY SECTION WRAPPERS */
 .grey-section {
   background-color: var(--bg-section);
   border: 1px solid var(--border-grey);
   border-radius: 12px;
   padding: 26px;
   margin-bottom: 26px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
 }
 .section-title {
   font-size: 1.55rem;
@@ -522,7 +494,6 @@ header.site-header {
 }
 .section-sub { color: var(--text-muted); margin-bottom: 20px; font-size: 0.96rem; }
 
-/* INTERACTIVE ERGONOMICS CALCULATOR */
 .calc-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -567,8 +538,8 @@ header.site-header {
   border-radius: 8px;
   text-align: center;
 }
-.metric-card .val { font-size: 1.48rem; font-weight: 900; color: #0f172a; }
-.metric-card .lbl { font-size: 0.77rem; font-weight: 700; color: #334155; text-transform: uppercase; }
+.metric-card .val { font-size: 1.5rem; font-weight: 900; color: #0f172a; }
+.metric-card .lbl { font-size: 0.78rem; font-weight: 700; color: #334155; text-transform: uppercase; }
 .rec-box {
   background: #ffffff;
   border: 2px solid var(--accent-green);
@@ -578,7 +549,6 @@ header.site-header {
 }
 .rec-box h4 { color: var(--accent-green); font-size: 1.04rem; margin-bottom: 6px; }
 
-/* SEARCH & FILTER BAR */
 .search-bar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
 .search-input {
   flex: 1;
@@ -598,7 +568,6 @@ header.site-header {
   font-weight: 700;
 }
 
-/* PRODUCT & DAILY ARTICLE CARDS */
 .product-grid, .articles-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -635,7 +604,6 @@ header.site-header {
 }
 .spec-box li { margin-bottom: 4px; }
 
-/* COMPARISON TABLE */
 .table-wrap { overflow-x: auto; }
 table.comp-table {
   width: 100%;
@@ -659,7 +627,6 @@ table.comp-table td {
 }
 table.comp-table tr:nth-child(even) { background: #e2e8f0; }
 
-/* FAQ ACCORDION */
 details.faq-item {
   background: var(--bg-card);
   border: 1px solid var(--border-grey);
@@ -670,13 +637,11 @@ details.faq-item {
 details.faq-item summary { font-weight: 800; font-size: 1.02rem; cursor: pointer; color: #0f172a; }
 details.faq-item p { margin-top: 10px; color: #334155; font-size: 0.95rem; }
 
-/* SITEMAP DIRECTORY */
 .sitemap-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
 .sitemap-box { background: var(--bg-card); border: 1px solid var(--border-grey); padding: 18px; border-radius: 8px; }
 .sitemap-box h3 { margin-bottom: 10px; font-size: 1.1rem; color: #0f172a; }
 .sitemap-box ul { padding-left: 18px; font-size: 0.9rem; line-height: 1.8; }
 
-/* FOOTER */
 footer.site-footer {
   background: var(--bg-darker);
   color: #cbd5e1;
@@ -690,11 +655,7 @@ footer.site-footer {
 """
 
 
-# ==============================================================================
-# HTML PAGE GENERATORS
-# ==============================================================================
 def build_article_page(article: dict, recent_articles: list[dict]) -> str:
-    """Membangun halaman HTML artikel review produk ergonomi harian lengkap dengan kalkulator & Schema SEO."""
     related_links = ""
     for rel in recent_articles[:8]:
         if rel["slug"] == article["slug"]:
@@ -702,28 +663,27 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
         related_links += f"""
         <li>
           <a href="{BASE_URL}/reviews/{rel['slug']}.html"><strong>{rel['title']}</strong></a>
-          <span> ({rel['category']} | Load: {rel['load_lbs']} lbs — {rel['date']})</span>
+          <span> ({rel['vol_cuft']} Cu. Ft. / {rel['media_type']} — {rel['date']})</span>
         </li>
         """
 
-    heights_chart = [
-        ("5'2\" (157 cm)", 62),
-        ("5'6\" (168 cm)", 66),
-        ("5'10\" (178 cm)", 70),
-        ("6'1\" (185 cm)", 73),
-        ("6'4\" (193 cm)", 76),
+    bed_scenarios = [
+        ("4x4 ft Raised Bed (6-in Depth)", 4.0, 4.0, 6.0),
+        ("4x8 ft Raised Bed (9-in Depth)", 4.0, 8.0, 9.0),
+        ("6x3 ft Oval Bed (12-in Depth)", 6.0, 3.0, 12.0),
+        ("8x4 ft Deep Raised Bed (12-in Depth)", 8.0, 4.0, 12.0),
+        ("10x5 ft Garden Plot (3-in Mulch Topdress)", 10.0, 5.0, 3.0),
     ]
-    chart_rows = ""
-    for label, h_in in heights_chart:
-        s_desk = round(h_in * 0.405 + 0.8, 1)
-        st_desk = round(h_in * 0.625 + 0.8, 1)
-        ch_h = round(h_in * 0.25 + 0.8, 1)
-        chart_rows += f"""
+    scenario_rows = ""
+    for b_name, l_ft, w_ft, d_in in bed_scenarios:
+        needed_cuft = round((l_ft * w_ft * (d_in / 12.0)), 1)
+        bags_ct = max(1, math.ceil(needed_cuft / max(article["vol_cuft"], 0.5)))
+        scenario_rows += f"""
         <tr>
-          <td><strong>{label}</strong></td>
-          <td>{ch_h}\" ({round(ch_h * 2.54)} cm)</td>
-          <td>{s_desk}\" ({round(s_desk * 2.54)} cm)</td>
-          <td>{st_desk}\" ({round(st_desk * 2.54)} cm)</td>
+          <td><strong>{b_name}</strong></td>
+          <td>{needed_cuft} Cu. Ft. ({round(needed_cuft / 27.0, 2)} Cu. Yd.)</td>
+          <td>{bags_ct} x {article['vol_cuft']} Cu. Ft. Units</td>
+          <td><a href="{article['affiliate_url']}" target="_blank" rel="nofollow sponsored noopener">Check Amazon Price &rarr;</a></td>
         </tr>
         """
 
@@ -733,18 +693,18 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
         "mainEntity": [
             {
                 "@type": "Question",
-                "name": f"Is the {article['brand']} {article['model_name']} suitable for {article['profile_title']}?",
+                "name": f"How much area does one {article['brand']} {article['model_name']} cover?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": f"Yes. With a rated load capacity of {article['load_lbs']} lbs and {article['core_mech']}, the {article['brand']} {article['model_name']} {article['profile_benefit']}."
+                    "text": f"Each {article['vol_cuft']} cu. ft. unit of {article['brand']} {article['model_name']} covers approximately {article['cov_3in']} sq. ft. at a 3-inch layer depth."
                 }
             },
             {
                 "@type": "Question",
-                "name": f"What desk height does a {article['height_label']} user need?",
+                "name": f"How many units are needed for {article['app_title']}?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": f"According to ANSI/BIFMA anthropometric standards, a {article['height_label']} user needs an optimal seated desk height of approximately {article['sit_desk']} inches and a standing desk height of {article['stand_desk']} inches."
+                    "text": f"For {article['target_cuft']} cu. ft. ({article['cu_yards']} cubic yards), you need approximately {article['bags_needed']} units of {article['vol_cuft']} cu. ft. capacity."
                 }
             }
         ]
@@ -755,11 +715,11 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{article['title']} ({article['date']} Ergonomic Fit &amp; Load Test)</title>
-  <meta name="description" content="Hands-on ergonomic fit review of the {article['brand']} {article['model_name']} ({article['load_lbs']} lbs capacity) for {article['profile_title']}. Includes desk height chart &amp; Amazon deals." />
+  <title>{article['title']} ({article['date']} Volume &amp; Bag Count Guide)</title>
+  <meta name="description" content="Review of {article['brand']} {article['model_name']} ({article['vol_cuft']} cu. ft., {article['media_type']}) for {article['app_title']}. Includes cubic feet &amp; bag calculator." />
   <link rel="canonical" href="{BASE_URL}/reviews/{article['slug']}.html" />
   <meta property="og:title" content="{article['title']}" />
-  <meta property="og:description" content="Rated at {article['load_lbs']} lbs with {article['brand_tech']}. Ergonomic calibration for {article['height_label']}." />
+  <meta property="og:description" content="Covers {article['cov_3in']} sq. ft. at 3-in depth per {article['vol_cuft']} cu. ft. unit ({article['media_type']})." />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="{BASE_URL}/reviews/{article['slug']}.html" />
   <style>{GLOBAL_CSS}</style>
@@ -767,16 +727,16 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
 </head>
 <body>
   <div class="top-promo-banner">
-    <span class="badge-live">HOME OFFICE DEAL</span>
-    Check Live Amazon Price &amp; Instant Coupon on <strong>{article['brand']} {article['model_name']}</strong>
+    <span class="badge-live">GARDEN SUPPLY DEAL</span>
+    Check Live Amazon Pricing &amp; Multi-Pack Savings on <strong>{article['brand']} {article['model_name']}</strong>
     <a class="banner-cta" href="{article['affiliate_url']}" target="_blank" rel="nofollow sponsored noopener">Check Price on Amazon &rarr;</a>
   </div>
 
   <header class="site-header">
     <div class="container nav-flex">
-      <a href="{BASE_URL}/index.html" class="brand-logo">ErgoDesk<span>Calc</span></a>
+      <a href="{BASE_URL}/index.html" class="brand-logo">SoilBag<span>Calc</span></a>
       <ul class="nav-links">
-        <li><a href="{BASE_URL}/index.html#calculator">Ergonomic Calculator</a></li>
+        <li><a href="{BASE_URL}/index.html#calculator">Soil &amp; Mulch Calculator</a></li>
         <li><a href="{BASE_URL}/index.html#search-section">Search Products</a></li>
         <li><a href="{BASE_URL}/index.html#bestsellers">Best Sellers</a></li>
         <li><a href="{BASE_URL}/index.html#comparison">Comparison Table</a></li>
@@ -789,68 +749,67 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
   <main class="container" style="margin-top:24px;">
     <article class="grey-section">
       <div style="font-size:0.82rem; font-weight:700; color:#334155; text-transform:uppercase; margin-bottom:6px;">
-        Published: {article['date']} &bull; Category: {article['category']} &bull; Verified Rating: ★ {article['rating']}/5.0
+        Published: {article['date']} &bull; Category: {article['category']} &bull; Rating: ★ {article['rating']}/5.0
       </div>
       <h1 style="font-size:1.95rem; margin-bottom:14px; color:#0f172a;">{article['title']}</h1>
       <p style="font-size:1.05rem; color:#334155; margin-bottom:20px;">
-        Configuring a pain-free workstation for <strong>{article['profile_title']}</strong> requires matching exact anthropometric dimensions—specifically a seated desk height near <strong>{article['sit_desk']} inches</strong>, chair seat height near <strong>{article['chair_h']} inches</strong>, and standing desk elevation around <strong>{article['stand_desk']} inches</strong>. In this review, we examine how the <strong>{article['brand']} {article['model_name']}</strong> ({article['load_lbs']} lbs rated load) {article['profile_benefit']}.
+        Planning a garden project for <strong>{article['app_title']}</strong> is much easier when you convert bed dimensions into exact cubic feet before shopping. Here we evaluate the <strong>{article['brand']} {article['model_name']}</strong> ({article['vol_cuft']} cu. ft. per unit, {article['media_type']}, {article['spec_note']}) and show how it {article['app_benefit']}.
       </p>
 
       <div class="hero-deal-box" style="margin-bottom:24px; text-align:left; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px;">
         <div>
           <h3 style="margin-bottom:4px;">{article['brand']} {article['model_name']} — Amazon Availability</h3>
-          <p style="color:#cbd5e1; font-size:0.93rem;">{article['brand_tech']} | Height Range: {article['min_h']}\"–{article['max_h']}\" | Rated Load: {article['load_lbs']} lbs</p>
+          <p style="color:#cbd5e1; font-size:0.93rem;">{article['brand_tech']} | Unit Volume: {article['vol_cuft']} Cu. Ft. | 3-In Coverage: ~{article['cov_3in']} Sq. Ft.</p>
         </div>
         <a class="btn-amazon" href="{article['affiliate_url']}" target="_blank" rel="nofollow sponsored noopener">Check Current Price on Amazon &rarr;</a>
       </div>
 
-      <h2 class="section-title">1. Mechanical Specs &amp; Ergonomic Calibration</h2>
+      <h2 class="section-title">1. Material Specifications &amp; Coverage Breakdown</h2>
       <div class="table-wrap" style="margin:16px 0 26px;">
         <table class="comp-table">
           <thead>
             <tr>
+              <th>Attribute</th>
               <th>Specification</th>
-              <th>Rated Measurement</th>
-              <th>Posture &amp; Stability Impact</th>
+              <th>Garden Benefit</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>Height / Vertical Range</strong></td>
-              <td>{article['min_h']}\" to {article['max_h']}\"</td>
-              <td>Matches target ergonomic zone for {article['height_label']} users</td>
+              <td><strong>Volume Per Unit</strong></td>
+              <td>{article['vol_cuft']} Cubic Feet</td>
+              <td>Covers ~{article['cov_3in']} sq. ft. at a standard 3-inch layer</td>
             </tr>
             <tr>
-              <td><strong>Maximum Load Capacity</strong></td>
-              <td>{article['load_lbs']} lbs</td>
-              <td>Zero sag or front-to-back wobble under full workstation hardware</td>
-            </tr>
-            <tr>
-              <td><strong>Core Engineering Mechanism</strong></td>
-              <td>{article['core_mech']}</td>
+              <td><strong>Composition / Material</strong></td>
+              <td>{article['media_type']}</td>
               <td>{article['brand_tech']}</td>
             </tr>
             <tr>
-              <td><strong>Target Posture Profile</strong></td>
-              <td>{article['profile_title']}</td>
-              <td>Designed for neutral 90-degree elbows and relaxed trapezius muscles</td>
+              <td><strong>Key Performance Spec</strong></td>
+              <td>{article['spec_note']}</td>
+              <td>Supports healthy root expansion and consistent moisture</td>
+            </tr>
+            <tr>
+              <td><strong>Target Project Estimate</strong></td>
+              <td>{article['target_cuft']} Cu. Ft. ({article['bags_needed']} Units)</td>
+              <td>Sized for {article['app_title']}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <h2 class="section-title">2. Quick Personal Height Checker for {article['brand']}</h2>
-      <p class="section-sub">Enter your height in inches below (e.g., 70 inches = 5'10\") to verify your ideal sitting and standing heights:</p>
+      <h2 class="section-title">2. Interactive Bag &amp; Cubic Yard Estimator for {article['brand']}</h2>
+      <p class="section-sub">Enter your target volume in cubic feet below to compute how many {article['vol_cuft']} cu. ft. units you need:</p>
       <div class="calc-panel" style="margin-bottom:26px;">
         <div class="calc-grid">
           <div class="form-group">
-            <label for="artHeightIn">Your Height (Total Inches):</label>
-            <input type="number" id="artHeightIn" value="{article['height_in']}" min="56" max="82" step="1" oninput="calcArticleErgo()" />
-            <p style="font-size:0.86rem; color:#334155; margin-top:6px;">Tip: 5'4\" = 64 in &bull; 5'8\" = 68 in &bull; 6'0\" = 72 in</p>
+            <label for="artCuFtInput">Required Volume (Cubic Feet):</label>
+            <input type="number" id="artCuFtInput" value="{article['target_cuft']}" min="1" max="500" step="1" oninput="calcArticleBags()" />
           </div>
           <div class="metric-card">
-            <div class="lbl">Your Ideal Sit / Stand Desk Height</div>
-            <div class="val" id="artErgoOut">Sit: {article['sit_desk']}\" | Stand: {article['stand_desk']}\"</div>
+            <div class="lbl">Estimated Units Needed ({article['vol_cuft']} Cu. Ft. Each)</div>
+            <div class="val" id="artBagsOut">{article['bags_needed']} Units</div>
             <div style="margin-top:10px;">
               <a class="btn-amazon" href="{article['affiliate_url']}" target="_blank" rel="nofollow sponsored noopener">Shop {article['brand']} on Amazon</a>
             </div>
@@ -858,51 +817,51 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
         </div>
       </div>
 
-      <h2 class="section-title">3. ANSI/BIFMA Desk &amp; Chair Height Reference Chart</h2>
+      <h2 class="section-title">3. Common Garden Bed &amp; Mulch Layer Reference</h2>
       <div class="table-wrap" style="margin:16px 0 26px;">
         <table class="comp-table">
           <thead>
             <tr>
-              <th>User Height</th>
-              <th>Chair Seat Height</th>
-              <th>Seated Desk Height</th>
-              <th>Standing Desk Height</th>
+              <th>Bed / Application</th>
+              <th>Volume Required</th>
+              <th>Estimated Quantity</th>
+              <th>Amazon Link</th>
             </tr>
           </thead>
           <tbody>
-            {chart_rows}
+            {scenario_rows}
           </tbody>
         </table>
       </div>
 
-      <h2 class="section-title">4. Pros, Cons &amp; Ergonomic Verdict</h2>
+      <h2 class="section-title">4. Pros, Cons &amp; Buying Verdict</h2>
       <div class="calc-grid" style="margin:16px 0 26px;">
         <div class="calc-panel" style="border-left:5px solid #15803d;">
-          <h3 style="color:#15803d; margin-bottom:10px;">Key Strengths (Pros)</h3>
+          <h3 style="color:#15803d; margin-bottom:10px;">Advantages (Pros)</h3>
           <ul style="padding-left:18px; font-size:0.94rem;">
-            <li><strong>{article['brand_tech']}</strong> delivers dependable long-term structural rigidity.</li>
-            <li>Generous <strong>{article['load_lbs']} lbs load rating</strong> leaves plenty of headroom for multi-monitor setups.</li>
-            <li>Well calibrated for <strong>{article['profile_title']}</strong>.</li>
+            <li><strong>{article['brand_tech']}</strong> promotes strong root growth and drainage.</li>
+            <li>Clear <strong>{article['vol_cuft']} cu. ft.</strong> volume rating simplifies project budgeting.</li>
+            <li>Well-suited for <strong>{article['app_title']}</strong>.</li>
           </ul>
         </div>
         <div class="calc-panel" style="border-left:5px solid #b91c1c;">
-          <h3 style="color:#b91c1c; margin-bottom:10px;">Things to Consider (Cons)</h3>
+          <h3 style="color:#b91c1c; margin-bottom:10px;">Considerations (Cons)</h3>
           <ul style="padding-left:18px; font-size:0.94rem;">
-            <li>Using an under-desk walking pad adds ~4.5 to 5 inches to your standing height—verify maximum elevation before ordering.</li>
-            <li>Pair with a dedicated cable management tray to prevent tension when switching from sit to stand.</li>
+            <li>Soil naturally settles 10%–20% after initial watering—factor in a top-off bag if needed.</li>
+            <li>Large multi-bed installations may benefit from ordering multi-pack bundles in advance.</li>
           </ul>
         </div>
       </div>
 
       <div class="hero-deal-box">
-        <h3>Ready to Build a Pain-Free Setup for {article['profile_title']}?</h3>
-        <p style="color:#cbd5e1; margin-bottom:14px;">Compare live Amazon discounts, finish options, and verified buyer photos today.</p>
+        <h3>Ready to Stock Up for {article['app_title']}?</h3>
+        <p style="color:#cbd5e1; margin-bottom:14px;">Compare current pack sizes, shipping options, and gardener reviews on Amazon.</p>
         <a class="btn-amazon" href="{article['affiliate_url']}" target="_blank" rel="nofollow sponsored noopener">View {article['brand']} {article['model_name']} on Amazon &rarr;</a>
       </div>
     </article>
 
     <section class="grey-section">
-      <h2 class="section-title">More Daily Ergonomic Desk, Chair &amp; Monitor Arm Reviews</h2>
+      <h2 class="section-title">More Daily Soil, Mulch &amp; Raised Bed Reviews</h2>
       <ul style="padding-left:20px; line-height:1.9;">
         {related_links}
       </ul>
@@ -912,23 +871,23 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
   <footer class="site-footer">
     <div class="container">
       <div class="footer-links">
-        <a href="{BASE_URL}/index.html">Home &amp; Ergonomic Calculator</a>
+        <a href="{BASE_URL}/index.html">Home &amp; Soil Calculator</a>
         <a href="{BASE_URL}/index.html#bestsellers">Best Sellers</a>
         <a href="{BASE_URL}/index.html#comparison">Comparison Chart</a>
         <a href="{BASE_URL}/sitemap.html">HTML Site Map</a>
         <a href="{BASE_URL}/sitemap.xml">XML Sitemap</a>
         <a href="{BASE_URL}/feed.xml">RSS Feed</a>
       </div>
-      <p>Affiliate Disclosure: ErgoDeskCalc participates in the Amazon Services LLC Associates Program (StoreID: {AFFILIATE_TAG}). As an Amazon Associate, we earn from qualifying purchases.</p>
+      <p>Affiliate Disclosure: SoilBagCalc participates in the Amazon Services LLC Associates Program (StoreID: {AFFILIATE_TAG}). As an Amazon Associate, we earn from qualifying purchases.</p>
     </div>
   </footer>
 
   <script>
-    function calcArticleErgo() {{
-      var h = parseFloat(document.getElementById('artHeightIn').value) || 68;
-      var sit = (h * 0.405 + 0.8).toFixed(1);
-      var stand = (h * 0.625 + 0.8).toFixed(1);
-      document.getElementById('artErgoOut').textContent = 'Sit: ' + sit + '\" | Stand: ' + stand + '\"';
+    function calcArticleBags() {{
+      var req = parseFloat(document.getElementById('artCuFtInput').value) || 1;
+      var perUnit = {article['vol_cuft']};
+      var count = Math.max(1, Math.ceil(req / perUnit));
+      document.getElementById('artBagsOut').textContent = count + ' Units';
     }}
   </script>
 </body>
@@ -936,13 +895,12 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
 
 
 def build_html_sitemap_page(all_articles: list[dict]) -> str:
-    """Membangun halaman direktori HTML Site Map lengkap (sitemap.html)."""
     article_links = ""
     for art in all_articles:
         article_links += f"""
         <li>
           <a href="{BASE_URL}/reviews/{art['slug']}.html"><strong>{art['title']}</strong></a>
-          <span> — {art['category']} ({art['load_lbs']} lbs | Published {art['date']})</span>
+          <span> — {art['category']} ({art['vol_cuft']} Cu. Ft. | Published {art['date']})</span>
         </li>
         """
 
@@ -950,7 +908,7 @@ def build_html_sitemap_page(all_articles: list[dict]) -> str:
     for p in CORE_PRODUCTS:
         product_links += f"""
         <li>
-          <a href="{amazon_search_url(p['search_query'])}" target="_blank" rel="nofollow sponsored noopener">{p['name']} ({p['key_spec']})</a>
+          <a href="{amazon_search_url(p['search_query'])}" target="_blank" rel="nofollow sponsored noopener">{p['name']} ({p['bag_cuft']} Cu. Ft.)</a>
           <span> — {p['badge']}</span>
         </li>
         """
@@ -960,17 +918,17 @@ def build_html_sitemap_page(all_articles: list[dict]) -> str:
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Complete Site Map — ErgoDeskCalc Standing Desk, Chair &amp; Monitor Arm Calculator</title>
-  <meta name="description" content="Complete HTML Site Map indexing all ergonomic standing desk calculators, monitor distance tools, comparison tables, and {len(all_articles)} daily product reviews." />
+  <title>Site Map — SoilBagCalc Garden Soil, Mulch &amp; Raised Bed Calculator</title>
+  <meta name="description" content="Complete HTML Site Map indexing all interactive garden soil cubic yard calculators, bag estimators, comparison tables, and {len(all_articles)} daily product reviews." />
   <link rel="canonical" href="{BASE_URL}/sitemap.html" />
   <style>{GLOBAL_CSS}</style>
 </head>
 <body>
   <header class="site-header">
     <div class="container nav-flex">
-      <a href="{BASE_URL}/index.html" class="brand-logo">ErgoDesk<span>Calc</span></a>
+      <a href="{BASE_URL}/index.html" class="brand-logo">SoilBag<span>Calc</span></a>
       <ul class="nav-links">
-        <li><a href="{BASE_URL}/index.html#calculator">Ergonomic Calculator</a></li>
+        <li><a href="{BASE_URL}/index.html#calculator">Soil Calculator</a></li>
         <li><a href="{BASE_URL}/index.html#bestsellers">Best Sellers</a></li>
         <li><a href="{BASE_URL}/index.html#comparison">Comparison Table</a></li>
         <li><a href="{BASE_URL}/index.html#daily-reviews">Daily Reviews</a></li>
@@ -981,33 +939,33 @@ def build_html_sitemap_page(all_articles: list[dict]) -> str:
 
   <main class="container" style="margin-top:24px;">
     <section class="grey-section">
-      <h1 class="section-title">ErgoDeskCalc — Complete HTML Site Map &amp; Archive</h1>
-      <p class="section-sub">Direct index of all ergonomic workstation calculators, comparison tables, XML feeds, and {len(all_articles)} automated daily product reviews.</p>
+      <h1 class="section-title">SoilBagCalc — Complete HTML Site Map &amp; Archive</h1>
+      <p class="section-sub">Index of all interactive garden calculators, comparison tables, XML/RSS feeds, and {len(all_articles)} automated daily product reviews.</p>
 
       <div class="sitemap-columns" style="margin-bottom:24px;">
         <div class="sitemap-box">
           <h3>Core Calculators &amp; Sections</h3>
           <ul>
-            <li><a href="{BASE_URL}/index.html">Homepage &amp; 4-in-1 Ergonomic Desk Calculator</a></li>
-            <li><a href="{BASE_URL}/index.html#calculator">Standing Desk, Chair, Monitor Distance &amp; VESA Arm Load Tool</a></li>
-            <li><a href="{BASE_URL}/index.html#search-section">Real-Time Home Office Gear Search &amp; Filter</a></li>
-            <li><a href="{BASE_URL}/index.html#bestsellers">Top 10 Best-Selling Ergonomic Office Products</a></li>
+            <li><a href="{BASE_URL}/index.html">Homepage &amp; Garden Soil / Mulch Volume Calculator</a></li>
+            <li><a href="{BASE_URL}/index.html#calculator">Interactive Cubic Feet, Cubic Yards &amp; Bag Estimator</a></li>
+            <li><a href="{BASE_URL}/index.html#search-section">Real-Time Soil, Mulch, Grow Bag &amp; Raised Bed Search</a></li>
+            <li><a href="{BASE_URL}/index.html#bestsellers">Top 10 Best-Selling Amazon Garden Products</a></li>
             <li><a href="{BASE_URL}/index.html#comparison">Side-by-Side Technical Comparison Table</a></li>
-            <li><a href="{BASE_URL}/index.html#faq">OSHA &amp; ANSI/BIFMA Ergonomics FAQ</a></li>
+            <li><a href="{BASE_URL}/index.html#faq">Soil Depth, Cubic Yard &amp; Bag Sizing FAQ</a></li>
           </ul>
         </div>
         <div class="sitemap-box">
           <h3>Search Engine &amp; Syndication Feeds</h3>
           <ul>
-            <li><a href="{BASE_URL}/sitemap.xml">Primary XML Sitemap (sitemap.xml)</a></li>
-            <li><a href="{BASE_URL}/feed.xml">Automated Daily Review RSS 2.0 Feed (feed.xml)</a></li>
-            <li><a href="{BASE_URL}/robots.txt">Crawler Directives (robots.txt)</a></li>
+            <li><a href="{BASE_URL}/sitemap.xml">XML Sitemap (sitemap.xml)</a></li>
+            <li><a href="{BASE_URL}/feed.xml">RSS 2.0 Feed (feed.xml)</a></li>
+            <li><a href="{BASE_URL}/robots.txt">Robots Directives (robots.txt)</a></li>
           </ul>
         </div>
       </div>
 
       <div class="sitemap-box" style="margin-bottom:24px;">
-        <h3>All Daily Ergonomic Product Review Articles ({len(all_articles)} Indexed Pages)</h3>
+        <h3>All Daily Product Review Articles ({len(all_articles)} Indexed Pages)</h3>
         <ul>
           {article_links}
         </ul>
@@ -1024,7 +982,7 @@ def build_html_sitemap_page(all_articles: list[dict]) -> str:
 
   <footer class="site-footer">
     <div class="container">
-      <p>&copy; {datetime.datetime.now(datetime.timezone.utc).year} ErgoDeskCalc (Amazon StoreID: {AFFILIATE_TAG}). <a href="{BASE_URL}/index.html" style="color:#ffffff;">Return to Ergonomic Calculator</a></p>
+      <p>&copy; {datetime.datetime.now(datetime.timezone.utc).year} SoilBagCalc (Amazon StoreID: {AFFILIATE_TAG}). <a href="{BASE_URL}/index.html" style="color:#ffffff;">Return to Calculator</a></p>
     </div>
   </footer>
 </body>
@@ -1032,7 +990,6 @@ def build_html_sitemap_page(all_articles: list[dict]) -> str:
 
 
 def build_index_page(all_articles: list[dict]) -> str:
-    """Membangun halaman utama (index.html) dengan Kalkulator Ergonomi 4-in-1, Banner, Search, Best Sellers, Comparison, Daily Reviews, FAQ, dan Site Map."""
     bestsellers_cards = ""
     for p in CORE_PRODUCTS:
         aff_url = amazon_search_url(p["search_query"])
@@ -1043,10 +1000,10 @@ def build_index_page(all_articles: list[dict]) -> str:
             <h3 style="font-size:1.14rem; margin-bottom:8px;">{p['name']}</h3>
             <p style="font-size:0.88rem; color:#334155; margin-bottom:8px;">{p['highlight']}</p>
             <ul class="spec-box">
-              <li><strong>Height / Lift Range:</strong> {p['min_h_in']}\" – {p['max_h_in']}\"</li>
-              <li><strong>Max Load Capacity:</strong> {p['load_lbs']} lbs</li>
-              <li><strong>Key Hardware Spec:</strong> {p['key_spec']}</li>
-              <li><strong>Ergonomic Highlight:</strong> {p['ergo_benefit']}</li>
+              <li><strong>Unit Volume:</strong> {p['bag_cuft']} Cu. Ft.</li>
+              <li><strong>3-In Coverage:</strong> ~{p['coverage_at_3in_sqft']} Sq. Ft.</li>
+              <li><strong>Material Mix:</strong> {p['soil_type']}</li>
+              <li><strong>Key Spec:</strong> {p['ph_range']}</li>
               <li><strong>Buyer Rating:</strong> ★ {p['rating']}/5 ({p['reviews_count']}+ reviews)</li>
             </ul>
           </div>
@@ -1061,10 +1018,10 @@ def build_index_page(all_articles: list[dict]) -> str:
         <tr>
           <td><strong>{p['name']}</strong><br/><span style="font-size:0.78rem; color:#334155;">{p['badge']}</span></td>
           <td>{p['category']}</td>
-          <td><strong>{p['min_h_in']}\"–{p['max_h_in']}\"</strong></td>
-          <td>{p['load_lbs']} lbs</td>
-          <td>{p['key_spec']}</td>
-          <td>{p['ergo_benefit']}</td>
+          <td><strong>{p['bag_cuft']} Cu. Ft.</strong></td>
+          <td>~{p['coverage_at_3in_sqft']} Sq. Ft.</td>
+          <td>{p['soil_type']}</td>
+          <td>{p['ph_range']}</td>
           <td>★ {p['rating']}</td>
           <td><a class="btn-amazon" style="padding:7px 12px; font-size:0.82rem;" href="{aff_url}" target="_blank" rel="nofollow sponsored noopener">View Deal</a></td>
         </tr>
@@ -1073,16 +1030,16 @@ def build_index_page(all_articles: list[dict]) -> str:
     daily_cards = ""
     for art in all_articles[:36]:
         daily_cards += f"""
-        <div class="article-card" data-art-search="{art['title'].lower()} {art['brand'].lower()} {art['category'].lower()} {art['profile_title'].lower()}">
+        <div class="article-card" data-art-search="{art['title'].lower()} {art['brand'].lower()} {art['category'].lower()} {art['app_title'].lower()}">
           <div>
             <div style="font-size:0.78rem; font-weight:700; color:#334155; text-transform:uppercase; margin-bottom:6px;">
-              {art['date']} &bull; {art['category']} &bull; {art['load_lbs']} lbs Capacity
+              {art['date']} &bull; {art['category']} &bull; {art['vol_cuft']} Cu. Ft.
             </div>
             <h3 style="font-size:1.12rem; margin-bottom:10px;">
               <a href="{BASE_URL}/reviews/{art['slug']}.html" style="color:#0f172a;">{art['title']}</a>
             </h3>
             <p style="font-size:0.9rem; color:#334155; margin-bottom:14px;">
-              Calibrated for <strong>{art['height_label']}</strong> (Sit: {art['sit_desk']}\" / Stand: {art['stand_desk']}\") with {art['brand_tech']}.
+              Requires <strong>{art['bags_needed']} units</strong> ({art['target_cuft']} cu. ft. / {art['cu_yards']} cu. yd.) with {art['brand_tech']}.
             </p>
           </div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -1100,28 +1057,28 @@ def build_index_page(all_articles: list[dict]) -> str:
 
     faqs = [
         (
-            "How do I calculate my ideal sitting and standing desk height?",
-            "Your elbows should bend at a relaxed 90 to 100-degree angle with shoulders dropped and wrists flat on the keyboard. Using ANSI/BIFMA anthropometric ratios, multiply your total height in inches by 0.405 (plus shoe heel height) for seated desk height, and multiply by 0.625 (plus shoe or walking-pad deck height) for standing desk height."
+            "How do I calculate cubic feet and cubic yards of garden soil or mulch?",
+            "Multiply your bed Length (ft) by Width (ft) by Depth in inches divided by 12 to get Cubic Feet (Cu. Ft.). Divide Cubic Feet by 27 to get Cubic Yards (Cu. Yd.). For example, an 8 ft x 4 ft bed filled 9 inches deep equals (8 x 4 x 9) / 12 = 24 cubic feet (0.89 cubic yards)."
         ),
         (
-            "Why do 3-stage dual-motor standing desks matter for shorter and taller people?",
-            "Standard 2-stage desks only travel from 28 inches to 46 inches—which is too tall for seated users under 5'7\" and too short for standing users over 6'2\" (or anyone using an under-desk walking pad). 3-stage telescoping columns travel from 22.8 inches up to 48.5+ inches with vastly superior front-to-back stability."
+            "How many bags of 2 cu. ft. soil or mulch do I need for a project?",
+            "Divide your total required cubic feet by the bag size (e.g., 2.0 cu. ft. per bag) and round up to the nearest whole bag. A 16 cu. ft. project requires eight 2 cu. ft. bags."
         ),
         (
-            "How high and how far away should my computer monitor be placed?",
-            "Position the top bezel of your display at or slightly below eye level so your gaze angles gently downward by 10 to 15 degrees. Place the screen at roughly 1.1x to 1.25x your monitor's diagonal size (about 24 to 36 inches away) to prevent neck strain and eye fatigue."
+            "What depth of mulch should I apply around plants and trees?",
+            "Apply a 2- to 3-inch layer of mulch for moisture retention and weed control, keeping mulch a few inches away from tree trunks and plant stems so bark stays dry and healthy."
         ),
         (
-            "How do I choose a VESA monitor arm weight capacity for a curved or ultrawide display?",
-            "Check your monitor's panel-only weight (without the factory stand) and multiply by 1.25x for gas-spring safety headroom. Deep-curved 34-inch to 49-inch ultrawide monitors shift the center of gravity forward, requiring a heavy-duty reinforced tilt pivot rated for 30 to 42+ lbs."
+            "What depth of soil is best for raised vegetable beds?",
+            "Shallow-rooted greens and herbs do well in 6 to 8 inches of soil, while deep-rooted crops like tomatoes, peppers, potatoes, and squash thrive in 12 to 18 inches of loose, well-draining soil."
         ),
         (
-            "How much extra desk height do I need if I use an under-desk walking pad treadmill?",
-            "Most slim under-desk walking pads have a deck height between 4.2 and 5.2 inches. Add your treadmill's deck thickness directly to your normal standing desk height—for example, a 5'10\" user normally stands at 44.5 inches, so with a walking pad they need a desk that reaches at least 49 inches."
+            "Should I account for soil settling when ordering bags?",
+            "Yes. Loose potting soil, compost, and raised bed mixes settle slightly after initial watering and over the growing season, so having an extra bag or two on hand makes topping off easy."
         ),
         (
-            "What is the best sit-to-stand ratio during an 8-hour workday?",
-            "Ergonomics researchers recommend the 20-8-2 rhythm or alternating roughly 30 to 45 minutes of sitting with 15 to 20 minutes of standing on a contoured anti-fatigue mat, avoiding locking your knees for hours at a time."
+            "When does it make sense to use fabric grow bags instead of rigid beds?",
+            "Fabric grow bags work well on patios, decks, or small yards where digging is impractical, offering breathable walls that encourage root air-pruning and excess water drainage."
         )
     ]
 
@@ -1144,11 +1101,11 @@ def build_index_page(all_articles: list[dict]) -> str:
         {
             "@context": "https://schema.org",
             "@type": "WebApplication",
-            "name": "ErgoDeskCalc — Standing Desk Height, Chair Seat, Monitor Eye-Level & VESA Arm Load Calculator",
+            "name": "SoilBagCalc — Garden Soil, Mulch & Raised Bed Volume Calculator",
             "applicationCategory": "UtilitiesApplication",
             "operatingSystem": "All",
             "url": f"{BASE_URL}/index.html",
-            "description": "Free interactive ergonomic workstation height calculator for sitting desk, standing desk, chair seat, monitor viewing distance, and VESA arm weight capacity."
+            "description": "Free interactive garden bed soil, mulch, compost, and bag count calculator with daily product reviews."
         },
         {
             "@context": "https://schema.org",
@@ -1160,12 +1117,8 @@ def build_index_page(all_articles: list[dict]) -> str:
     js_products = json.dumps([
         {
             "name": p["name"],
-            "brand": p["brand"],
             "category": p["category"],
-            "min_h_in": p["min_h_in"],
-            "max_h_in": p["max_h_in"],
-            "load_lbs": p["load_lbs"],
-            "key_spec": p["key_spec"],
+            "bag_cuft": p["bag_cuft"],
             "badge": p["badge"],
             "highlight": p["highlight"],
             "url": amazon_search_url(p["search_query"])
@@ -1178,12 +1131,12 @@ def build_index_page(all_articles: list[dict]) -> str:
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ErgoDeskCalc — Standing Desk Height, Ergonomic Chair &amp; Monitor Arm Load Calculator</title>
-  <meta name="description" content="Calculate exact seated desk height, standing desk height, chair seat height, monitor viewing distance, and VESA arm load capacity in seconds. Compare top ergonomic office gear &amp; daily reviews." />
+  <title>SoilBagCalc — Garden Soil, Mulch, Compost &amp; Raised Bed Volume Calculator</title>
+  <meta name="description" content="Calculate exact cubic feet, cubic yards, and bag counts for garden soil, mulch, compost, and raised beds in seconds. Compare top garden products &amp; daily reviews." />
   <link rel="canonical" href="{BASE_URL}/index.html" />
-  <link rel="alternate" type="application/rss+xml" title="ErgoDeskCalc Daily Ergonomic Office Reviews RSS" href="{BASE_URL}/feed.xml" />
-  <meta property="og:title" content="ErgoDeskCalc — Interactive Standing Desk, Chair &amp; Monitor Ergonomics Calculator" />
-  <meta property="og:description" content="Dial in your exact desk height, chair seat height, and monitor arm load rating with instant hardware matches." />
+  <link rel="alternate" type="application/rss+xml" title="SoilBagCalc Daily Garden Reviews RSS" href="{BASE_URL}/feed.xml" />
+  <meta property="og:title" content="SoilBagCalc — Interactive Garden Soil, Mulch &amp; Bag Calculator" />
+  <meta property="og:description" content="Calculate cubic feet, cubic yards, and bag counts for your raised beds, containers, and mulch borders." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="{BASE_URL}/index.html" />
   <style>{GLOBAL_CSS}</style>
@@ -1191,19 +1144,17 @@ def build_index_page(all_articles: list[dict]) -> str:
 </head>
 <body>
 
-  <!-- TOP STICKY PROMO BANNER -->
   <div class="top-promo-banner">
-    <span class="badge-live">HOME OFFICE DEALS</span>
-    Save Up to 40% on FlexiSpot Dual-Motor Standing Desks, Ergotron Monitor Arms, Ergonomic Chairs &amp; Walking Pads
-    <a class="banner-cta" href="{amazon_search_url('Dual Motor Standing Desk Ergonomic Chair Monitor Arm Deal')}" target="_blank" rel="nofollow sponsored noopener">Claim Today's Amazon Coupons &rarr;</a>
+    <span class="badge-live">GARDEN &amp; PATIO DEALS</span>
+    Shop Top-Rated Potting Soil, Raised Garden Beds, Mulch &amp; Fabric Grow Bags on Amazon
+    <a class="banner-cta" href="{amazon_search_url('Organic Potting Soil Raised Garden Bed Fabric Grow Bags')}" target="_blank" rel="nofollow sponsored noopener">Browse Today's Amazon Deals &rarr;</a>
   </div>
 
-  <!-- NAVIGATION HEADER -->
   <header class="site-header">
     <div class="container nav-flex">
-      <a href="{BASE_URL}/index.html" class="brand-logo">ErgoDesk<span>Calc</span></a>
+      <a href="{BASE_URL}/index.html" class="brand-logo">SoilBag<span>Calc</span></a>
       <ul class="nav-links">
-        <li><a href="#calculator">Ergonomic Calculator</a></li>
+        <li><a href="#calculator">Soil Calculator</a></li>
         <li><a href="#search-section">Search Products</a></li>
         <li><a href="#bestsellers">Best Sellers</a></li>
         <li><a href="#comparison">Comparison Chart</a></li>
@@ -1216,153 +1167,131 @@ def build_index_page(all_articles: list[dict]) -> str:
 
   <main class="container">
 
-    <!-- HERO BANNER -->
     <section class="hero-banner">
       <div class="hero-grid">
         <div>
-          <h1>Standing Desk Height, Ergonomic Chair &amp; Monitor Arm Load Calculator</h1>
-          <p>Eliminate neck strain, wrist pain, and desk wobble. Enter your height, footwear or walking-pad deck allowance, and monitor size below to compute your exact <strong>ANSI/BIFMA Seated &amp; Standing Desk Height</strong>, <strong>Chair Seat Height</strong>, <strong>Monitor Viewing Distance</strong>, and <strong>VESA Arm Weight Rating</strong>—paired with instant Amazon hardware matches.</p>
+          <h1>Garden Soil, Mulch, Compost &amp; Raised Bed Volume Calculator</h1>
+          <p>Enter your bed or garden area dimensions and depth below to calculate exact <strong>Cubic Feet</strong>, <strong>Cubic Yards</strong>, and <strong>Bag Counts</strong>—with instant links to matching garden products on Amazon.</p>
           <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <a class="btn-amazon" href="#calculator">Launch Ergonomic Calculator &darr;</a>
-            <a class="btn-outline" style="color:#ffffff; border-color:#94a3b8;" href="{amazon_search_url('Best Selling Standing Desk Ergonomic Office Chair')}" target="_blank" rel="nofollow sponsored noopener">Browse Amazon Office Best Sellers &rarr;</a>
+            <a class="btn-amazon" href="#calculator">Open Soil Volume Calculator &darr;</a>
+            <a class="btn-outline" style="color:#ffffff; border-color:#94a3b8;" href="{amazon_search_url('Best Selling Garden Soil Raised Bed Mulch')}" target="_blank" rel="nofollow sponsored noopener">View Amazon Garden Best Sellers &rarr;</a>
           </div>
         </div>
         <div class="hero-deal-box">
-          <h3>🖥️ Featured Workstation Upgrade</h3>
-          <p style="color:#e2e8f0; font-size:0.92rem; margin-bottom:14px;">3-Stage Dual-Motor Standing Desks (22.8\"–48.4\"), Heavy-Duty Ultrawide Monitor Arms &amp; Walking Pads.</p>
-          <a class="btn-amazon" style="width:100%;" href="{amazon_search_url('FlexiSpot E7 Standing Desk Ergotron LX Arm UREVO Walking Pad')}" target="_blank" rel="nofollow sponsored noopener">View Live Amazon Discounts &rarr;</a>
+          <h3>🌱 Featured Garden Essentials</h3>
+          <p style="color:#e2e8f0; font-size:0.92rem; margin-bottom:14px;">Organic Potting Soil, Galvanized Raised Beds, Hardwood Mulch &amp; Breathable Grow Bags.</p>
+          <a class="btn-amazon" style="width:100%;" href="{amazon_search_url('FoxFarm Ocean Forest VEGEGA Raised Garden Bed VIVOSUN Grow Bags')}" target="_blank" rel="nofollow sponsored noopener">Check Live Amazon Prices &rarr;</a>
         </div>
       </div>
     </section>
 
-    <!-- 4-IN-1 INTERACTIVE ERGONOMIC WORKSTATION CALCULATOR -->
     <section id="calculator" class="grey-section">
-      <h2 class="section-title">Interactive 4-in-1 Standing Desk, Chair, Monitor Distance &amp; VESA Arm Calculator</h2>
-      <p class="section-sub">Click a height preset or enter your exact measurements below. All outputs update instantly in both Inches and Centimeters (cm) with live equipment matching.</p>
+      <h2 class="section-title">Interactive Garden Soil, Mulch &amp; Bag Count Calculator</h2>
+      <p class="section-sub">Choose a preset or enter custom dimensions in feet and inches to calculate required volume and bag counts.</p>
 
       <div class="preset-row">
-        <button type="button" class="preset-btn" onclick="setErgoPreset(5, 3, 0.8, 27, 13, 0)">👩 Petite User (5'3\" + 27\" Monitor)</button>
-        <button type="button" class="preset-btn" onclick="setErgoPreset(5, 9, 1.0, 32, 18, 0)">🧑 Standard Setup (5'9\" + 32\" 4K)</button>
-        <button type="button" class="preset-btn" onclick="setErgoPreset(6, 2, 1.0, 34, 22, 0)">👨 Tall User (6'2\" + 34\" Ultrawide)</button>
-        <button type="button" class="preset-btn" onclick="setErgoPreset(5, 10, 1.0, 27, 14, 4.8)">🚶 Walking Pad Setup (5'10\" + 4.8\" Deck)</button>
-        <button type="button" class="preset-btn" onclick="setErgoPreset(6, 0, 1.0, 49, 32, 0)">🎮 49\" Super-Ultrawide Battlestation</button>
+        <button type="button" class="preset-btn" onclick="setSoilPreset(8, 4, 9, 2.0)">🥕 8&times;4 ft Bed (9-in Soil)</button>
+        <button type="button" class="preset-btn" onclick="setSoilPreset(4, 4, 12, 2.0)">🍅 4&times;4 ft Deep Bed (12-in)</button>
+        <button type="button" class="preset-btn" onclick="setSoilPreset(20, 4, 3, 2.0)">🌲 20&times;4 ft Mulch Strip (3-in)</button>
+        <button type="button" class="preset-btn" onclick="setSoilPreset(6, 3, 12, 1.5)">🌿 6&times;3 ft Oval Bed (12-in)</button>
+        <button type="button" class="preset-btn" onclick="setSoilPreset(12, 10, 2, 1.0)">🌾 12&times;10 ft Compost Topdress (2-in)</button>
       </div>
 
       <div class="calc-grid">
         <div class="calc-panel">
           <div class="form-row">
             <div class="form-group">
-              <label for="ergoFt">1. Your Height (Feet):</label>
-              <input type="number" id="ergoFt" value="5" min="4" max="7" oninput="calculateErgonomics()" />
+              <label for="slLength">1. Length (Feet):</label>
+              <input type="number" id="slLength" value="8" min="1" max="200" step="0.5" oninput="calculateSoil()" />
             </div>
             <div class="form-group">
-              <label for="ergoIn">2. Additional Inches (0–11):</label>
-              <input type="number" id="ergoIn" value="10" min="0" max="11" oninput="calculateErgonomics()" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="ergoHeel">3. Footwear / Standing Mat Elevation:</label>
-              <select id="ergoHeel" onchange="calculateErgonomics()">
-                <option value="0">Barefoot / Socks (0.0 in)</option>
-                <option value="0.8">Indoor Slippers / Thin Mat (0.8 in)</option>
-                <option value="1.0" selected>Sneakers / Cushioned Anti-Fatigue Mat (1.0 in)</option>
-                <option value="1.5">Work Boots / Thick 3D Contoured Mat (1.5 in)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="ergoWalkPad">4. Under-Desk Walking Pad Deck:</label>
-              <select id="ergoWalkPad" onchange="calculateErgonomics()">
-                <option value="0" selected>No Walking Pad (Standard Standing)</option>
-                <option value="4.5">Slim Walking Pad (+4.5 in Standing Elevation)</option>
-                <option value="5.2">Standard Treadmill Deck (+5.2 in Standing Elevation)</option>
-              </select>
+              <label for="slWidth">2. Width (Feet):</label>
+              <input type="number" id="slWidth" value="4" min="1" max="200" step="0.5" oninput="calculateSoil()" />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label for="ergoMonSize">5. Primary Monitor Diagonal (Inches):</label>
-              <input type="number" id="ergoMonSize" value="27" min="15" max="57" oninput="calculateErgonomics()" />
+              <label for="slDepth">3. Depth (Inches):</label>
+              <input type="number" id="slDepth" value="9" min="0.5" max="48" step="0.5" oninput="calculateSoil()" />
             </div>
             <div class="form-group">
-              <label for="ergoMonWeight">6. Monitor Panel Weight (lbs, w/o Stand):</label>
-              <input type="number" id="ergoMonWeight" value="14" min="4" max="45" oninput="calculateErgonomics()" />
+              <label for="slBagSize">4. Bag / Unit Size (Cubic Feet):</label>
+              <select id="slBagSize" onchange="calculateSoil()">
+                <option value="1.0">1.0 Cu. Ft. Bag</option>
+                <option value="1.5">1.5 Cu. Ft. Bag</option>
+                <option value="2.0" selected>2.0 Cu. Ft. Standard Bag</option>
+                <option value="3.0">3.0 Cu. Ft. Large Bag</option>
+              </select>
             </div>
           </div>
         </div>
 
         <div class="calc-panel">
-          <h3 style="margin-bottom:12px; color:#0f172a;">Your Exact Ergonomic Workstation Specs</h3>
+          <h3 style="margin-bottom:12px; color:#0f172a;">Calculated Material Requirements</h3>
           <div class="metrics-grid">
             <div class="metric-card">
-              <div class="val" id="outSitDesk">29.4\" (75 cm)</div>
-              <div class="lbl">Seated Desk &amp; Keyboard Height</div>
+              <div class="val" id="outCuFt">24.0 Cu. Ft.</div>
+              <div class="lbl">Total Volume (Cu. Ft.)</div>
             </div>
             <div class="metric-card">
-              <div class="val" id="outStandDesk">44.8\" (114 cm)</div>
-              <div class="lbl">Standing Desk Height</div>
+              <div class="val" id="outCuYd">0.89 Cu. Yd.</div>
+              <div class="lbl">Cubic Yards</div>
             </div>
             <div class="metric-card">
-              <div class="val" id="outChairSeat">18.5\" (47 cm)</div>
-              <div class="lbl">Ergonomic Chair Seat Height</div>
+              <div class="val" id="outBags">12 Bags</div>
+              <div class="lbl">Estimated Bags Needed</div>
             </div>
             <div class="metric-card">
-              <div class="val" id="outMonitorDist">31\" | 18+ lb Arm</div>
-              <div class="lbl">Viewing Distance &amp; Min. VESA Arm</div>
+              <div class="val" id="outArea">32.0 Sq. Ft.</div>
+              <div class="lbl">Surface Area</div>
             </div>
           </div>
 
-          <div id="dynamicErgoRec" class="rec-box">
-            <!-- Dynamically populated by JS -->
-          </div>
+          <div id="dynamicSoilRec" class="rec-box"></div>
         </div>
       </div>
     </section>
 
-    <!-- PRODUCT SEARCH & FILTER -->
     <section id="search-section" class="grey-section">
-      <h2 class="section-title">Search Amazon Standing Desks, Monitor Arms, Chairs &amp; Walking Pads</h2>
-      <p class="section-sub">Filter our verified catalog and daily review archive by brand, keyword, or category, or search directly on Amazon.</p>
+      <h2 class="section-title">Search Garden Soil, Mulch, Grow Bags &amp; Raised Beds</h2>
+      <p class="section-sub">Filter products and daily reviews by keyword or category, or search directly on Amazon.</p>
       <div class="search-bar">
-        <input type="text" id="ergoSearchInput" class="search-input" placeholder="Search FlexiSpot, Ergotron, Steelcase, SIHOO, ultrawide, dual motor, walking pad..." oninput="filterErgoCatalog()" />
-        <select id="ergoCatSelect" class="filter-select" onchange="filterErgoCatalog()">
-          <option value="ALL">All Office Categories</option>
-          <option value="Standing Desk">Electric Standing Desks</option>
-          <option value="Monitor Arm">VESA Monitor Arms</option>
-          <option value="Ergonomic Chair">Ergonomic Task Chairs</option>
-          <option value="Standing Accessories">Walking Pads &amp; Standing Mats</option>
-          <option value="Ergonomic Peripherals">Split Keyboards &amp; Vertical Mice</option>
+        <input type="text" id="soilSearchInput" class="search-input" placeholder="Search FoxFarm, Miracle-Gro, VIVOSUN, VEGEGA, mulch, compost, grow bags..." oninput="filterSoilCatalog()" />
+        <select id="soilCatSelect" class="filter-select" onchange="filterSoilCatalog()">
+          <option value="ALL">All Categories</option>
+          <option value="Potting & Raised Bed Soil">Potting &amp; Raised Bed Soil</option>
+          <option value="Garden Mulch & Compost">Garden Mulch &amp; Compost</option>
+          <option value="Fabric Grow Bags">Fabric Grow Bags</option>
+          <option value="Metal Raised Garden Beds">Metal Raised Garden Beds</option>
         </select>
-        <button type="button" class="btn-amazon" onclick="searchErgoAmazonDirect()">Search Live on Amazon &rarr;</button>
+        <button type="button" class="btn-amazon" onclick="searchSoilAmazonDirect()">Search Live on Amazon &rarr;</button>
       </div>
-      <p id="ergoFilterStatus" style="font-size:0.88rem; font-weight:700; color:#334155;">Showing all 10 top-rated ergonomic workstation products below:</p>
+      <p id="soilFilterStatus" style="font-size:0.88rem; font-weight:700; color:#334155;">Showing all 10 top-rated garden products below:</p>
     </section>
 
-    <!-- BEST SELLERS -->
     <section id="bestsellers" class="grey-section">
-      <h2 class="section-title">Best-Selling Standing Desks, Monitor Arms, Chairs &amp; Walking Pads</h2>
-      <p class="section-sub">Ranked by BIFMA structural stability, height adjustability range, load capacity, and verified Amazon buyer satisfaction.</p>
-      <div id="ergoBestSellersGrid" class="product-grid">
+      <h2 class="section-title">Best-Selling Soil, Mulch, Grow Bags &amp; Raised Garden Beds</h2>
+      <p class="section-sub">Popular options for raised beds, containers, and yard landscaping on Amazon.</p>
+      <div id="soilBestSellersGrid" class="product-grid">
         {bestsellers_cards}
       </div>
     </section>
 
-    <!-- COMPARISON TABLE -->
     <section id="comparison" class="grey-section">
-      <h2 class="section-title">Side-by-Side Ergonomic Gear Comparison Matrix</h2>
-      <p class="section-sub">Compare minimum/maximum height travel, load capacity, key mechanism, and ergonomic advantage across flagship models.</p>
+      <h2 class="section-title">Side-by-Side Garden Product Comparison</h2>
+      <p class="section-sub">Compare volume per unit, 3-inch coverage area, composition, and key specs.</p>
       <div class="table-wrap">
         <table class="comp-table">
           <thead>
             <tr>
-              <th>Product Model</th>
+              <th>Product</th>
               <th>Category</th>
-              <th>Height / Lift Range</th>
-              <th>Max Load</th>
-              <th>Hardware Mechanism</th>
-              <th>Ergonomic Benefit</th>
+              <th>Unit Volume</th>
+              <th>3-In Coverage</th>
+              <th>Material Mix</th>
+              <th>Key Spec</th>
               <th>Rating</th>
-              <th>Amazon Deal</th>
+              <th>Amazon Link</th>
             </tr>
           </thead>
           <tbody>
@@ -1372,40 +1301,37 @@ def build_index_page(all_articles: list[dict]) -> str:
       </div>
     </section>
 
-    <!-- DAILY AUTOMATED PRODUCT REVIEWS -->
     <section id="daily-reviews" class="grey-section">
-      <h2 class="section-title">Daily Automated Ergonomic Product Reviews &amp; Fit Tests</h2>
-      <p class="section-sub">Our automated GitHub Actions pipeline publishes <strong>3 brand-new ergonomic office product reviews every single day</strong>. Browse the latest reviews below (Total live articles: <strong>{len(all_articles)}</strong>):</p>
-      <div id="dailyErgoReviewsGrid" class="articles-grid">
+      <h2 class="section-title">Daily Automated Product Reviews &amp; Sizing Guides</h2>
+      <p class="section-sub">Updated automatically with <strong>3 new product review articles every day</strong>. Currently live: <strong>{len(all_articles)}</strong> articles:</p>
+      <div id="dailySoilReviewsGrid" class="articles-grid">
         {daily_cards}
       </div>
     </section>
 
-    <!-- FAQ SECTION -->
     <section id="faq" class="grey-section">
-      <h2 class="section-title">Frequently Asked Questions (Desk Height, Monitor Distance &amp; Chair Fit)</h2>
-      <p class="section-sub">Essential OSHA and ANSI/BIFMA workstation ergonomics formulas explained clearly.</p>
+      <h2 class="section-title">Frequently Asked Questions (Soil, Mulch &amp; Raised Bed Sizing)</h2>
+      <p class="section-sub">Quick reference answers for measuring beds, estimating bags, and planning seasonal planting.</p>
       {faq_html}
     </section>
 
-    <!-- ON-PAGE SITE MAP DIRECTORY -->
     <section id="sitemap-section" class="grey-section">
-      <h2 class="section-title">Site Map &amp; Complete Content Directory</h2>
-      <p class="section-sub">Direct navigation for visitors and search engine crawlers across all calculators, feeds, and daily review archives.</p>
+      <h2 class="section-title">Site Map &amp; Content Directory</h2>
+      <p class="section-sub">Links to calculators, comparison tables, XML/RSS feeds, and daily review pages.</p>
       <div class="sitemap-columns">
         <div class="sitemap-box">
-          <h3>Main Tools &amp; XML Feeds</h3>
+          <h3>Main Pages &amp; Feeds</h3>
           <ul>
-            <li><a href="#calculator">4-in-1 Standing Desk, Chair &amp; Monitor Arm Calculator</a></li>
-            <li><a href="#bestsellers">Top 10 Best-Selling Ergonomic Office Products</a></li>
-            <li><a href="#comparison">Side-by-Side Comparison Matrix</a></li>
-            <li><a href="{BASE_URL}/sitemap.html"><strong>Full HTML Site Map Page (All {len(all_articles)} Reviews)</strong></a></li>
-            <li><a href="{BASE_URL}/sitemap.xml">Google/Bing XML Sitemap (sitemap.xml)</a></li>
-            <li><a href="{BASE_URL}/feed.xml">RSS 2.0 Syndication Feed (feed.xml)</a></li>
+            <li><a href="#calculator">Garden Soil, Mulch &amp; Bag Calculator</a></li>
+            <li><a href="#bestsellers">Best-Selling Garden Products</a></li>
+            <li><a href="#comparison">Side-by-Side Comparison Table</a></li>
+            <li><a href="{BASE_URL}/sitemap.html"><strong>Full HTML Site Map ({len(all_articles)} Reviews)</strong></a></li>
+            <li><a href="{BASE_URL}/sitemap.xml">XML Sitemap (sitemap.xml)</a></li>
+            <li><a href="{BASE_URL}/feed.xml">RSS 2.0 Feed (feed.xml)</a></li>
           </ul>
         </div>
         <div class="sitemap-box">
-          <h3>Latest Daily Ergonomic Review Archive Links</h3>
+          <h3>Recent Daily Review Articles</h3>
           <ul>
             {sitemap_preview_links}
           </ul>
@@ -1418,7 +1344,7 @@ def build_index_page(all_articles: list[dict]) -> str:
   <footer class="site-footer">
     <div class="container">
       <div class="footer-links">
-        <a href="#calculator">Ergonomic Calculator</a>
+        <a href="#calculator">Soil Calculator</a>
         <a href="#search-section">Product Search</a>
         <a href="#bestsellers">Best Sellers</a>
         <a href="#comparison">Comparison Table</a>
@@ -1428,75 +1354,57 @@ def build_index_page(all_articles: list[dict]) -> str:
         <a href="{BASE_URL}/sitemap.xml">XML Sitemap</a>
         <a href="{BASE_URL}/feed.xml">RSS Feed</a>
       </div>
-      <p style="margin-bottom:8px;"><strong>Amazon Affiliate Disclosure:</strong> ErgoDeskCalc participates in the Amazon Services LLC Associates Program (Affiliate StoreID: <code>{AFFILIATE_TAG}</code>), an affiliate advertising program designed to provide a means for sites to earn advertising fees by linking to Amazon.com.</p>
-      <p>&copy; {datetime.datetime.now(datetime.timezone.utc).year} ErgoDeskCalc. Powered by zero-maintenance GitHub Actions automation.</p>
+      <p style="margin-bottom:8px;"><strong>Amazon Affiliate Disclosure:</strong> SoilBagCalc participates in the Amazon Services LLC Associates Program (Affiliate StoreID: <code>{AFFILIATE_TAG}</code>), an affiliate advertising program designed to provide a means for sites to earn advertising fees by linking to Amazon.com.</p>
+      <p>&copy; {datetime.datetime.now(datetime.timezone.utc).year} SoilBagCalc. Automated via GitHub Actions.</p>
     </div>
   </footer>
 
   <script>
-    var ERGO_PRODUCTS = {js_products};
+    var SOIL_PRODUCTS = {js_products};
     var AFFILIATE_TAG = "{AFFILIATE_TAG}";
 
-    function setErgoPreset(ft, inch, heel, monSize, monWt, walkPad) {{
-      document.getElementById('ergoFt').value = ft;
-      document.getElementById('ergoIn').value = inch;
-      document.getElementById('ergoHeel').value = heel.toString();
-      document.getElementById('ergoMonSize').value = monSize;
-      document.getElementById('ergoMonWeight').value = monWt;
-      document.getElementById('ergoWalkPad').value = walkPad.toString();
-      calculateErgonomics();
+    function setSoilPreset(len, wid, depthIn, bagCuFt) {{
+      document.getElementById('slLength').value = len;
+      document.getElementById('slWidth').value = wid;
+      document.getElementById('slDepth').value = depthIn;
+      document.getElementById('slBagSize').value = bagCuFt.toString();
+      calculateSoil();
     }}
 
-    function calculateErgonomics() {{
-      var ft = parseFloat(document.getElementById('ergoFt').value) || 5;
-      var inch = parseFloat(document.getElementById('ergoIn').value) || 10;
-      var heel = parseFloat(document.getElementById('ergoHeel').value) || 1.0;
-      var walkPad = parseFloat(document.getElementById('ergoWalkPad').value) || 0;
-      var monSize = parseFloat(document.getElementById('ergoMonSize').value) || 27;
-      var monWt = parseFloat(document.getElementById('ergoMonWeight').value) || 14;
+    function calculateSoil() {{
+      var len = parseFloat(document.getElementById('slLength').value) || 4;
+      var wid = parseFloat(document.getElementById('slWidth').value) || 4;
+      var depthIn = parseFloat(document.getElementById('slDepth').value) || 6;
+      var bagSize = parseFloat(document.getElementById('slBagSize').value) || 2.0;
 
-      var totalIn = (ft * 12) + inch;
-      var sitDesk = +(totalIn * 0.405 + heel).toFixed(1);
-      var standDesk = +(totalIn * 0.625 + heel + walkPad).toFixed(1);
-      var chairSeat = +(totalIn * 0.25 + heel).toFixed(1);
+      var area = +(len * wid).toFixed(1);
+      var cuFt = +((len * wid * (depthIn / 12.0))).toFixed(1);
+      var cuYd = +(cuFt / 27.0).toFixed(2);
+      var bags = Math.max(1, Math.ceil(cuFt / bagSize));
 
-      var viewDist = Math.round(Math.min(42, Math.max(20, monSize * 1.15)));
-      var minArmLoad = Math.ceil(monWt * 1.25);
+      document.getElementById('outCuFt').textContent = cuFt.toLocaleString() + ' Cu. Ft.';
+      document.getElementById('outCuYd').textContent = cuYd + ' Cu. Yd.';
+      document.getElementById('outBags').textContent = bags.toLocaleString() + ' Bags';
+      document.getElementById('outArea').textContent = area.toLocaleString() + ' Sq. Ft.';
 
-      document.getElementById('outSitDesk').textContent = sitDesk + '\" (' + Math.round(sitDesk * 2.54) + ' cm)';
-      document.getElementById('outStandDesk').textContent = standDesk + '\" (' + Math.round(standDesk * 2.54) + ' cm)';
-      document.getElementById('outChairSeat').textContent = chairSeat + '\" (' + Math.round(chairSeat * 2.54) + ' cm)';
-      document.getElementById('outMonitorDist').textContent = viewDist + '\" Dist | ' + minArmLoad + '+ lb Arm';
+      var match = SOIL_PRODUCTS.find(function(p) {{ return p.bag_cuft >= bagSize; }}) || SOIL_PRODUCTS[0];
+      var shopAllUrl = 'https://www.amazon.com/s?k=' + encodeURIComponent(bagSize + ' cu ft garden soil raised bed mix') + '&tag=' + AFFILIATE_TAG;
+      var mulchUrl = 'https://www.amazon.com/s?k=' + encodeURIComponent('garden mulch ' + bagSize + ' cu ft') + '&tag=' + AFFILIATE_TAG;
 
-      // Find best standing desk covering both seated and standing calculated heights
-      var desks = ERGO_PRODUCTS.filter(function(p) {{ return p.category === 'Standing Desk'; }});
-      var bestDesk = desks.find(function(d) {{ return d.min_h_in <= sitDesk && d.max_h_in >= standDesk; }}) || desks[0];
-
-      // Find best monitor arm handling monitor weight with 25% safety margin
-      var arms = ERGO_PRODUCTS.filter(function(p) {{ return p.category === 'Monitor Arm'; }})
-        .sort(function(a, b) {{ return a.load_lbs - b.load_lbs; }});
-      var bestArm = arms.find(function(a) {{ return a.load_lbs >= minArmLoad; }}) || arms[arms.length - 1];
-
-      var customDeskUrl = 'https://www.amazon.com/s?k=' + encodeURIComponent('3 stage dual motor standing desk ' + Math.ceil(standDesk) + ' inch height') + '&tag=' + AFFILIATE_TAG;
-      var customArmUrl = 'https://www.amazon.com/s?k=' + encodeURIComponent('heavy duty monitor arm ' + monSize + ' inch ' + minArmLoad + ' lbs') + '&tag=' + AFFILIATE_TAG;
-      var chairUrl = 'https://www.amazon.com/s?k=' + encodeURIComponent('ergonomic office chair adjustable lumbar seat height') + '&tag=' + AFFILIATE_TAG;
-
-      var html = '<h4>✅ Matched Hardware for Your ' + ft + '\\'' + inch + '\" Ergonomic Profile:</h4>' +
-        '<p style="font-size:0.9rem; color:#334155; margin-bottom:10px;"><strong>Desk Match:</strong> ' + bestDesk.name + ' (' + bestDesk.min_h_in + '\"–' + bestDesk.max_h_in + '\") &bull; <strong>VESA Arm Match:</strong> ' + bestArm.name + ' (up to ' + bestArm.load_lbs + ' lbs).</p>' +
+      document.getElementById('dynamicSoilRec').innerHTML =
+        '<h4>✅ Estimated Order: ' + bags + ' x ' + bagSize + ' Cu. Ft. (' + cuFt + ' Cu. Ft. Total)</h4>' +
+        '<p style="font-size:0.9rem; color:#334155; margin-bottom:10px;"><strong>Featured Match:</strong> ' + match.name + ' — ' + match.highlight + '</p>' +
         '<div style="display:flex; gap:8px; flex-wrap:wrap;">' +
-        '<a class="btn-amazon" href="' + bestDesk.url + '" target="_blank" rel="nofollow sponsored noopener">Check ' + bestDesk.brand + ' Desk on Amazon &rarr;</a>' +
-        '<a class="btn-outline" href="' + bestArm.url + '" target="_blank" rel="nofollow sponsored noopener">Check ' + bestArm.brand + ' Monitor Arm</a>' +
-        '<a class="btn-outline" href="' + customDeskUrl + '" target="_blank" rel="nofollow sponsored noopener">Shop ' + Math.ceil(standDesk) + '\"+ Standing Desks</a>' +
-        '<a class="btn-outline" href="' + chairUrl + '" target="_blank" rel="nofollow sponsored noopener">Shop Ergonomic Chairs</a>' +
+        '<a class="btn-amazon" href="' + match.url + '" target="_blank" rel="nofollow sponsored noopener">Check ' + match.brand + ' on Amazon &rarr;</a>' +
+        '<a class="btn-outline" href="' + shopAllUrl + '" target="_blank" rel="nofollow sponsored noopener">Shop ' + bagSize + ' Cu. Ft. Soil</a>' +
+        '<a class="btn-outline" href="' + mulchUrl + '" target="_blank" rel="nofollow sponsored noopener">Shop Mulch &amp; Compost</a>' +
         '</div>';
-
-      document.getElementById('dynamicErgoRec').innerHTML = html;
     }}
 
-    function filterErgoCatalog() {{
-      var q = (document.getElementById('ergoSearchInput').value || '').toLowerCase().trim();
-      var cat = document.getElementById('ergoCatSelect').value;
-      var cards = document.querySelectorAll('#ergoBestSellersGrid .product-card');
+    function filterSoilCatalog() {{
+      var q = (document.getElementById('soilSearchInput').value || '').toLowerCase().trim();
+      var cat = document.getElementById('soilCatSelect').value;
+      var cards = document.querySelectorAll('#soilBestSellersGrid .product-card');
       var shown = 0;
 
       cards.forEach(function(c) {{
@@ -1512,29 +1420,28 @@ def build_index_page(all_articles: list[dict]) -> str:
         }}
       }});
 
-      var artCards = document.querySelectorAll('#dailyErgoReviewsGrid .article-card');
+      var artCards = document.querySelectorAll('#dailySoilReviewsGrid .article-card');
       artCards.forEach(function(ac) {{
         var aSearch = ac.getAttribute('data-art-search') || '';
         ac.style.display = (!q || aSearch.indexOf(q) !== -1) ? 'flex' : 'none';
       }});
 
-      document.getElementById('ergoFilterStatus').textContent =
-        'Showing ' + shown + ' matching flagship product(s) (and filtered daily review articles below):';
+      document.getElementById('soilFilterStatus').textContent =
+        'Showing ' + shown + ' matching product(s) (and filtered daily review articles below):';
     }}
 
-    function searchErgoAmazonDirect() {{
-      var q = document.getElementById('ergoSearchInput').value.trim() || 'Dual Motor Standing Desk Ergonomic Chair Monitor Arm';
+    function searchSoilAmazonDirect() {{
+      var q = document.getElementById('soilSearchInput').value.trim() || 'Garden Soil Raised Bed Mulch Grow Bags';
       window.open('https://www.amazon.com/s?k=' + encodeURIComponent(q) + '&tag=' + AFFILIATE_TAG, '_blank');
     }}
 
-    calculateErgonomics();
+    calculateSoil();
   </script>
 </body>
 </html>"""
 
 
 def generate_sitemaps_and_feeds(all_articles: list[dict]) -> list[str]:
-    """Menghasilkan sitemap.xml, sitemap.html, robots.txt, feed.xml, dan kunci verifikasi IndexNow."""
     today_iso = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
     urls = [f"{BASE_URL}/index.html", f"{BASE_URL}/sitemap.html"]
 
@@ -1568,12 +1475,10 @@ def generate_sitemaps_and_feeds(all_articles: list[dict]) -> list[str]:
     with open(os.path.join(OUTPUT_DIR, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write(sitemap_xml)
 
-    # HTML Site Map Page (sitemap.html)
     html_sitemap = build_html_sitemap_page(all_articles)
     with open(os.path.join(OUTPUT_DIR, "sitemap.html"), "w", encoding="utf-8") as f:
         f.write(html_sitemap)
 
-    # robots.txt
     robots_txt = f"""User-agent: *
 Allow: /
 
@@ -1582,7 +1487,6 @@ Sitemap: {BASE_URL}/sitemap.xml
     with open(os.path.join(OUTPUT_DIR, "robots.txt"), "w", encoding="utf-8") as f:
         f.write(robots_txt)
 
-    # RSS 2.0 Feed (feed.xml)
     rss_items = ""
     for art in all_articles[:30]:
         u = f"{BASE_URL}/reviews/{art['slug']}.html"
@@ -1590,16 +1494,16 @@ Sitemap: {BASE_URL}/sitemap.xml
       <title><![CDATA[{art['title']}]]></title>
       <link>{u}</link>
       <guid>{u}</guid>
-      <pubDate>{art['date']}T04:00:00Z</pubDate>
-      <description><![CDATA[Ergonomic fit test and height calibration for {art['brand']} {art['model_name']} ({art['load_lbs']} lbs capacity) tailored to {art['profile_title']}.]]></description>
+      <pubDate>{art['date']}T04:30:00Z</pubDate>
+      <description><![CDATA[Volume and bag estimator review for {art['brand']} {art['model_name']} ({art['vol_cuft']} cu. ft.) on {art['app_title']}.]]></description>
     </item>\n"""
 
     rss_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>ErgoDeskCalc — Daily Standing Desk, Chair &amp; Monitor Arm Reviews</title>
+    <title>SoilBagCalc — Daily Garden Soil, Mulch &amp; Raised Bed Reviews</title>
     <link>{BASE_URL}/index.html</link>
-    <description>Automated daily ergonomic home office reviews and workstation height calculators.</description>
+    <description>Automated daily product reviews and volume calculators for garden soil, mulch, compost, and raised beds.</description>
     <language>en-us</language>
 {rss_items}  </channel>
 </rss>"""
@@ -1607,7 +1511,6 @@ Sitemap: {BASE_URL}/sitemap.xml
     with open(os.path.join(OUTPUT_DIR, "feed.xml"), "w", encoding="utf-8") as f:
         f.write(rss_xml)
 
-    # IndexNow key verification file
     with open(os.path.join(OUTPUT_DIR, f"{INDEXNOW_KEY}.txt"), "w", encoding="utf-8") as f:
         f.write(INDEXNOW_KEY)
 
@@ -1615,7 +1518,6 @@ Sitemap: {BASE_URL}/sitemap.xml
 
 
 def ping_indexnow(newly_added: list[dict]):
-    """Mengirimkan ping otomatis ke IndexNow API agar mesin pencari langsung mengindeks 3 artikel baru setiap hari."""
     host = urllib.parse.urlparse(BASE_URL).netloc
     url_list = [
         f"{BASE_URL}/index.html",
@@ -1640,32 +1542,28 @@ def ping_indexnow(newly_added: list[dict]):
     )
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
-            print(f"[IndexNow] Pinged {len(url_list)} URLs successfully (HTTP {resp.status})")
+            print(f"[IndexNow] Pinged {len(url_list)} URLs (HTTP {resp.status})")
     except Exception as exc:
-        print(f"[IndexNow] Notice (non-blocking): {exc}")
+        print(f"[IndexNow] Notice: {exc}")
 
 
 def main():
     os.makedirs(REVIEWS_DIR, exist_ok=True)
     all_articles, newly_added = load_and_advance_state()
 
-    # 1. Build Homepage
     index_html = build_index_page(all_articles)
     with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_html)
 
-    # 2. Build Individual Review Pages
     for art in all_articles:
         page_html = build_article_page(art, all_articles)
         out_path = os.path.join(REVIEWS_DIR, f"{art['slug']}.html")
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(page_html)
 
-    # 3. Build Sitemap XML, Sitemap HTML, Robots.txt, RSS Feed & Ping IndexNow
     generate_sitemaps_and_feeds(all_articles)
     ping_indexnow(newly_added)
-
-    print(f"ErgoDeskCalc build finished! Total articles live: {len(all_articles)} (+{len(newly_added)} added today).")
+    print(f"SoilBagCalc built! Total articles: {len(all_articles)} (+{len(newly_added)} new).")
 
 
 if __name__ == "__main__":
