@@ -1,9 +1,9 @@
-name: Automated Daily 3-Review ErgoDesk Publisher & Calculator Builder
+name: Automated Daily 3-Review Soil & Garden Publisher
 
 on:
   schedule:
-    # Berjalan otomatis setiap hari pukul 04:00 UTC (menambahkan 3 artikel review produk baru setiap hari)
-    - cron: '0 4 * * *'
+    # Berjalan otomatis setiap hari pukul 04:30 UTC (menambah 3 artikel review produk baru setiap hari)
+    - cron: '30 4 * * *'
   workflow_dispatch: # Memungkinkan pemicuan manual kapan saja dengan 1 klik
   push:
     branches:
@@ -32,12 +32,12 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Configure Git Bot for Daily State Persistence
+      - name: Configure Git for Daily State Persistence
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Run ErgoDeskCalc Generator (3 New Daily Reviews + Sitemap + IndexNow)
+      - name: Run SoilBagCalc Generator (3 New Daily Reviews + Sitemap + IndexNow)
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
@@ -48,7 +48,7 @@ jobs:
         run: |
           git add posts_state.json
           if ! git diff --cached --quiet; then
-            git commit -m "Auto-publish 3 new daily ergonomic office product reviews [skip ci]"
+            git commit -m "Auto-publish 3 new daily garden soil & mulch product reviews [skip ci]"
             git pull --rebase origin main || true
             git push origin main
           fi
