@@ -713,10 +713,10 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="google-site-verification" content="pgvlG0f03ZrRZzbgDSXRhr6tsSfseFOhXCN6Yv_j5b8" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{article['title']} ({article['date']} Volume &amp; Bag Count Guide)</title>
+  <meta name="google-site-verification" content="pgvlG0f03ZrRZzbgDSXRhr6tsSfseFOhXCN6Yv_j5b8" />
   <meta name="description" content="Review of {article['brand']} {article['model_name']} ({article['vol_cuft']} cu. ft., {article['media_type']}) for {article['app_title']}. Includes cubic feet &amp; bag calculator." />
   <link rel="canonical" href="{BASE_URL}/reviews/{article['slug']}.html" />
   <meta property="og:title" content="{article['title']}" />
