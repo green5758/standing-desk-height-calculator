@@ -919,6 +919,7 @@ def build_html_sitemap_page(all_articles: list[dict]) -> str:
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google-site-verification" content="pgvlG0f03ZrRZzbgDSXRhr6tsSfseFOhXCN6Yv_j5b8" />
   <title>Site Map — SoilBagCalc Garden Soil, Mulch &amp; Raised Bed Calculator</title>
   <meta name="description" content="Complete HTML Site Map indexing all interactive garden soil cubic yard calculators, bag estimators, comparison tables, and {len(all_articles)} daily product reviews." />
   <link rel="canonical" href="{BASE_URL}/sitemap.html" />
@@ -1132,6 +1133,8 @@ def build_index_page(all_articles: list[dict]) -> str:
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- TAG VERIFIKASI GOOGLE SEARCH CONSOLE DITAMBAHKAN DI SINI -->
+  <meta name="google-site-verification" content="pgvlG0f03ZrRZzbgDSXRhr6tsSfseFOhXCN6Yv_j5b8" />
   <title>SoilBagCalc — Garden Soil, Mulch, Compost &amp; Raised Bed Volume Calculator</title>
   <meta name="description" content="Calculate exact cubic feet, cubic yards, and bag counts for garden soil, mulch, compost, and raised beds in seconds. Compare top garden products &amp; daily reviews." />
   <link rel="canonical" href="{BASE_URL}/index.html" />
