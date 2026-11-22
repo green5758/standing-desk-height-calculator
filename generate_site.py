@@ -713,6 +713,7 @@ def build_article_page(article: dict, recent_articles: list[dict]) -> str:
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="google-site-verification" content="pgvlG0f03ZrRZzbgDSXRhr6tsSfseFOhXCN6Yv_j5b8" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{article['title']} ({article['date']} Volume &amp; Bag Count Guide)</title>
