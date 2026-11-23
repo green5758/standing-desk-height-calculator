@@ -1,6 +1,6 @@
 {
-  "last_run_date": "2026-11-22",
-  "next_index": 30,
+  "last_run_date": "2026-11-23",
+  "next_index": 33,
   "published_articles": [
     {
       "index": 0,
@@ -181,6 +181,24 @@
       "slug": "review-burpee-15-cu-ft-premium-container-planter-mix-30",
       "date": "2026-11-22",
       "title": "Burpee 1.5 Cu. Ft. Premium Container & Planter Mix Review: Sized for 8x4 ft Raised Vegetable Bed at 9-Inch Soil Depth (24 Cu. Ft.)"
+    },
+    {
+      "index": 30,
+      "slug": "review-foxfarm-1-cu-ft-50-lb-composted-manure-soil-amendment-31",
+      "date": "2026-11-23",
+      "title": "FoxFarm 1 Cu. Ft. (50 lb) Composted Manure Soil Amendment Review: Sized for 8x4 ft Raised Vegetable Bed at 9-Inch Soil Depth (24 Cu. Ft.)"
+    },
+    {
+      "index": 31,
+      "slug": "review-miracle-gro-1-cu-ft-50-lb-composted-manure-soil-amendment-32",
+      "date": "2026-11-23",
+      "title": "Miracle-Gro 1 Cu. Ft. (50 lb) Composted Manure Soil Amendment Review: Sized for 8x4 ft Raised Vegetable Bed at 9-Inch Soil Depth (24 Cu. Ft.)"
+    },
+    {
+      "index": 32,
+      "slug": "review-coast-of-maine-1-cu-ft-50-lb-composted-manure-soil-amendment-33",
+      "date": "2026-11-23",
+      "title": "Coast of Maine 1 Cu. Ft. (50 lb) Composted Manure Soil Amendment Review: Sized for 8x4 ft Raised Vegetable Bed at 9-Inch Soil Depth (24 Cu. Ft.)"
     }
   ]
 }
